@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>上岸急救包 · 数量关系实战手册（互动刷题版）</title>
+<style>
+  :root {
+    --bg: #F6F5F0;
+    --surface: #FFFFFF;
+    --sidebar-bg: #FBFBF9;
+    --ink: #141414;
+    --ink-2: #3A3D42;
+    --muted: #6A6F77;
+    --line: #E4E2DC;
+    --line-strong: #141414;
+    --red: #B92B27;
+    --red-tint: #FDF4F3;
+    --green: #1B6E43;
+    --green-tint: #F1F8F4;
+    --tint: #F3F2EC;
+    --serif: "Alimama ShuHeiTi", "Source Han Sans CN", "Alibaba PuHuiTi", system-ui, sans-serif;
+    --sans: "Source Han Sans CN", "Alibaba PuHuiTi", system-ui, -apple-system, sans-serif;
+    --mono: "PT Mono", ui-monospace, monospace;
+  }
+
+  .web-wm {
+    position: fixed;
+    inset: 0;
+    left: 290px;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    align-items: center;
+    justify-items: center;
+  }
+  .web-wm span {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(20, 20, 20, 0.036);
+    transform: rotate(-24deg);
+    white-space: nowrap;
+    user-select: none;
+  }
+  .brand-wm {
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--red);
+    letter-spacing: 0.4px;
+  }
+  .sidebar-wm-note {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    padding: 8px 0 2px;
+    border-top: 1px solid var(--line);
+    margin-top: 10px;
+  }
+  @media (max-width: 980px) {
+    .web-wm { left: 0; grid-template-columns: repeat(2, 1fr); }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.75;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ===== FULL-SCREEN TWO-PANE APP SHELL ===== */
+  .app-shell {
+    display: grid;
+    grid-template-columns: 290px minmax(0, 1fr);
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  /* Left Fixed Navigation & Exam Sheet Rail */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--line);
+    padding: 24px 20px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .brand {
+    border-top: 3px solid var(--ink);
+    padding-top: 12px;
+  }
+  .brand-kicker {
+    font-size: 11px;
+    letter-spacing: 1.8px;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .brand h1 {
+    font-family: var(--serif);
+    font-size: 21px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .brand p {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Mode Switcher */
+  .mode-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--ink);
+    background: var(--surface);
+  }
+  .mode-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--line);
+    padding: 8px 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn:hover { background: var(--tint); }
+  .mode-btn.active {
+    background: var(--ink);
+    color: #FFFFFF;
+  }
+
+  /* Live Scoreboard */
+  .score-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 14px;
+  }
+  .score-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .sc-val {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .sc-val.good { color: var(--green); }
+  .sc-val.accent { color: var(--red); }
+  .sc-lbl { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .prog-track {
+    height: 4px;
+    background: var(--tint);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .prog-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--ink);
+    transition: width 0.25s ease;
+  }
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .flt-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 4px 9px;
+    font-size: 12px;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .flt-btn:hover { border-color: var(--ink); }
+  .flt-btn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
+  /* Answer Sheet Grid (答题卡) */
+  .sheet-section h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+  }
+  .q-tile {
+    height: 32px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+  }
+  .q-tile:hover { border-color: var(--ink); }
+  .q-tile.st-right {
+    background: var(--green);
+    border-color: var(--green);
+    color: #FFFFFF;
+  }
+  .q-tile.st-wrong {
+    background: var(--red);
+    border-color: var(--red);
+    color: #FFFFFF;
+  }
+  .q-tile.is-cur {
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
+  }
+
+  /* Sidebar Quick Jump */
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    gap: 2px;
+  }
+  .nav-link {
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 7px 8px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-link:hover { background: var(--tint); color: var(--ink); }
+  .nav-link.active { color: var(--red); font-weight: 700; background: var(--red-tint); }
+  .nav-link span { font-size: 11.5px; color: var(--muted); }
+
+  .sidebar-foot {
+    margin-top: auto;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+  .foot-btn {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 7px 8px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .foot-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* ===== MAIN WORKSPACE (FULL-WIDTH SPACIOUS READING) ===== */
+  .workspace {
+    padding: 32px 52px 72px;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  /* Top Utility Header inside Workspace */
+  .ws-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+    margin-bottom: 24px;
+  }
+  .ws-bar h2 {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .ws-bar-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .toggle-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--ink);
+    user-select: none;
+  }
+  .toggle-pill input { accent-color: var(--red); width: 15px; height: 15px; cursor: pointer; }
+
+  /* Cheat Sheet View */
+  .cheatsheet-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 32px 36px;
+    margin-bottom: 32px;
+  }
+  .ed-svg { width: 100%; height: auto; display: block; margin: 14px 0 24px; }
+  .cs-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+  .cs-panel { border-top: 2px solid var(--ink); padding-top: 12px; }
+  .cs-panel h3 { font-family: var(--serif); font-size: 18px; margin-bottom: 12px; }
+  .cs-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .cs-table td { padding: 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .cs-table td:first-child { width: 84px; font-weight: 700; color: var(--red); white-space: nowrap; padding-right: 12px; }
+  .cs-top15 {
+    background: var(--tint);
+    border-left: 3px solid var(--red);
+    padding: 16px 20px;
+    font-size: 14.5px;
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .cs-note {
+    font-size: 14px;
+    color: var(--ink-2);
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+
+  /* Chapter Divider in List View */
+  .part-divider {
+    border-top: 2.5px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 12px 0;
+    margin: 40px 0 22px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .part-divider:first-child { margin-top: 0; }
+  .pd-num { font-size: 13px; font-weight: 700; color: var(--red); letter-spacing: 1.2px; }
+  .pd-title { font-family: var(--serif); font-size: 22px; font-weight: 700; }
+  .pd-sub { font-size: 14px; color: var(--muted); margin-left: auto; }
+
+  /* Question Practice Card (Generous, Editorial, Interactive) */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 28px 34px 26px;
+    margin-bottom: 24px;
+    transition: border-color 0.15s;
+  }
+  .q-card.answered-right { border-left: 4px solid var(--green); }
+  .q-card.answered-wrong { border-left: 4px solid var(--red); }
+
+  .q-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .q-top-left { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .q-num-tag {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 1px 8px;
+  }
+  .q-title {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+  .q-top-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+  }
+  .q-prio {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .q-timer {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Optional Trick Hint Strip */
+  .rule-strip {
+    background: var(--tint);
+    border-left: 3px solid var(--red);
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 15.5px;
+    color: var(--ink);
+  }
+  .rule-strip .rl { font-weight: 700; color: var(--red); margin-right: 8px; }
+  .rule-strip strong { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(185,43,39,0.4); text-underline-offset: 3px; }
+  .rule-strip.is-hidden { display: none; }
+  .hint-btn {
+    background: transparent;
+    border: 1px dashed var(--muted);
+    color: var(--ink-2);
+    padding: 5px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  .hint-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* Question Body */
+  .q-source {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .q-body.has-geom {
+    display: grid;
+    grid-template-columns: 1fr 270px;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .q-stem {
+    font-size: 17.5px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 18px;
+    text-align: justify;
+  }
+  .q-body.has-geom .q-stem { margin-bottom: 0; }
+  .q-geom {
+    background: #FCFCFA;
+    border: 1px solid var(--line);
+    padding: 10px;
+  }
+  .geom-svg { width: 100%; height: auto; display: block; }
+
+  /* Interactive Tactile Options */
+  .opts-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .opt-btn {
+    appearance: none;
+    text-align: left;
+    background: var(--surface);
+    border: 1.5px solid #D5D2C9;
+    padding: 14px 18px;
+    font-size: 16.5px;
+    font-family: var(--sans);
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.14s ease;
+    position: relative;
+  }
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--ink);
+    background: var(--tint);
+  }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid #C4C0B6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-2);
+    flex-shrink: 0;
+  }
+  .opt-btn:hover:not(:disabled) .opt-letter {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: #FFFFFF;
+  }
+  .opt-status {
+    margin-left: auto;
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+
+  /* Graded States */
+  .opt-btn.is-correct {
+    border-color: var(--green);
+    background: var(--green-tint);
+    color: var(--green);
+    font-weight: 600;
+  }
+  .opt-btn.is-correct .opt-letter {
+    border-color: var(--green);
+    background: var(--green);
+    color: #FFFFFF;
+  }
+  .opt-btn.is-wrong {
+    border-color: var(--red);
+    background: var(--red-tint);
+    color: var(--red);
+    font-weight: 600;
+  }
+  .opt-btn.is-wrong .opt-letter {
+    border-color: var(--red);
+    background: var(--red);
+    color: #FFFFFF;
+  }
+  .opt-btn.is-dim {
+    opacity: 0.52;
+  }
+
+  /* Feedback & Dual Explanation Drawer */
+  .sol-drawer {
+    display: none;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    margin-top: 6px;
+    animation: fadeIn 0.2s ease;
+  }
+  .sol-drawer.open { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .verdict-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: var(--tint);
+    font-size: 14.5px;
+  }
+  .verdict-bar.v-right { background: var(--green-tint); color: var(--green); }
+  .verdict-bar.v-wrong { background: var(--red-tint); color: var(--red); }
+  .verdict-bar.v-study { background: var(--tint); color: var(--ink); }
+  .verdict-main { font-weight: 700; }
+  .redo-btn {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 4px 12px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .redo-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  .dual-sol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 14px;
+  }
+  .ds-col { font-size: 15px; color: var(--ink-2); line-height: 1.78; text-align: justify; }
+  .ds-col.ds-math { border-left: 1px solid var(--line); padding-left: 24px; }
+  .ds-hd {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .ds-hd.red { color: var(--red); }
+  .ds-col code {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    background: var(--tint);
+    padding: 1px 5px;
+  }
+  .ds-tip {
+    font-size: 14px;
+    color: var(--muted);
+    border-top: 1px dashed var(--line);
+    padding-top: 10px;
+  }
+  .ds-tip strong { color: var(--ink-2); }
+
+  /* Focus Mode Navigation Footer */
+  .focus-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .fn-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--ink);
+    padding: 10px 22px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .fn-btn:hover:not(:disabled) { background: var(--ink); color: #FFFFFF; }
+  .fn-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .fn-hint { font-size: 13px; color: var(--muted); }
+
+  /* Empty filter state */
+  .empty-state {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  /* Mobile toggle */
+  .mobile-bar {
+    display: none;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 16px;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .mobile-menu-btn {
+    background: var(--ink);
+    color: #FFF;
+    border: none;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 1020px) {
+    .app-shell { grid-template-columns: 1fr; }
+    .mobile-bar { display: flex; }
+    .sidebar {
+      position: fixed;
+      left: -320px;
+      top: 0;
+      width: 300px;
+      z-index: 90;
+      transition: left 0.2s ease;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+    }
+    .sidebar.open { left: 0; }
+    .workspace { padding: 24px 20px 60px; }
+    .cs-two, .dual-sol, .q-body.has-geom { grid-template-columns: 1fr; }
+    .ds-col.ds-math { border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 14px; }
+    .opts-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="web-wm" aria-hidden="true">
+  <span>小红书：huyaaaa</span><span>小红书：huyaaaa</span><span>小红书：huyaaaa</span>
+  <span>小红书：huyaaaa</span><span>小红书：huyaaaa</span><span>小红书：huyaaaa</span>
+  <span>小红书：huyaaaa</span><span>小红书：huyaaaa</span><span>小红书：huyaaaa</span>
+</div>
+
+<div class="mobile-bar">
+  <strong style="font-family: var(--serif); font-size: 16px;">上岸急救包 · 数量关系实战手册</strong>
+  <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">答题卡与设置</button>
+</div>
+
+<div class="app-shell">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-kicker">公考考前实战刷题本</div>
+      <h1>上岸急救包<br/>数量关系实战手册</h1>
+      <p>31 技 · 35 道独立真题互动判题</p>
+      <div class="brand-wm">小红书：huyaaaa 原创整理</div>
+    </div>
+
+    <!-- Mode Switcher -->
+    <div class="mode-group" role="tablist">
+      <button class="mode-btn active" id="m-quiz" onclick="setMode('quiz')">整页刷题</button>
+      <button class="mode-btn" id="m-focus" onclick="setMode('focus')">逐题专注</button>
+      <button class="mode-btn" id="m-study" onclick="setMode('study')">背诵速览</button>
+    </div>
+
+    <!-- Live Scoreboard -->
+    <div class="score-panel">
+      <div class="score-row">
+        <div><div class="sc-val" id="sc-done">0/35</div><div class="sc-lbl">已作答</div></div>
+        <div><div class="sc-val good" id="sc-right">0</div><div class="sc-lbl">答对</div></div>
+        <div><div class="sc-val accent" id="sc-acc">--</div><div class="sc-lbl">正确率</div></div>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="filter-row">
+        <button class="flt-btn active" id="f-all" onclick="setFilter('all')">全部</button>
+        <button class="flt-btn" id="f-high" onclick="setFilter('high')">高频必背</button>
+        <button class="flt-btn" id="f-wrong" onclick="setFilter('wrong')">错题本</button>
+        <button class="flt-btn" id="f-todo" onclick="setFilter('todo')">未做题</button>
+      </div>
+    </div>
+
+    <!-- Answer Sheet Grid -->
+    <div class="sheet-section">
+      <h3><span>真题答题卡</span><span id="sheet-legend" style="font-weight:400;">绿对 · 红错</span></h3>
+      <div class="card-grid" id="card-grid"></div>
+    </div>
+
+    <!-- Quick Navigation -->
+    <nav class="nav-links">
+      <button class="nav-link" id="nv-sheet" onclick="showView('cheatsheet')">考前 3 分钟总纲<span>必看</span></button>
+      <button class="nav-link active" id="nv-practice" onclick="showView('practice')">真题实战练习<span>35 题</span></button>
+      <button class="nav-link" id="nv-part4" onclick="showView('part4')">技巧 31 · 终极兜底<span>分布图</span></button>
+      <button class="nav-link" id="nv-index" onclick="showView('index')">原秘籍 01–31 总表<span>对照</span></button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <button class="foot-btn" onclick="resetProgress()">清空重刷</button>
+      <button class="foot-btn" onclick="window.print()">打印页面</button>
+    </div>
+    <div class="sidebar-wm-note">小红书：huyaaaa · 仅供本人备考</div>
+  </aside>
+
+  <!-- RIGHT FULL-WIDTH WORKSPACE -->
+  <main class="workspace" id="workspace"></main>
+</div>
+
+<script>
+const DATA = {"parts": [{"id": "part1", "num": "第一篇", "title": "题干直秒型", "sub": "优先拿下硬核保底分，见到这四类特征直接出手。"}, {"id": "part2", "num": "第二篇", "title": "高频题型专项", "sub": "核心原则：题型技巧高于选项技巧，先辨题型再套规律。"}, {"id": "part3", "num": "第三篇", "title": "选项结构蒙题术", "sub": "按实战优先级排序：三等差一特殊 > 二倍 > 等差 ≈ 最值 > 奇偶/整/+1/升降 > 单调性。"}], "items": [{"idx": 1, "partId": "part1", "partNum": "第一篇", "partTitle": "题干直秒型", "orig": "技巧 24", "name": "最不利构造（抽屉原理）", "prio": "高频必背", "high": true, "rule": "题干问法出现<strong>“至少……才能保证……”</strong>，直接构造<strong>最倒霉的情况 + 1</strong>！", "source": "2022年河北省考《行测》第74题", "stem": "有200人参加招聘会，其中法学70人，经济学60人，工业设计50人，统计学20人，至少有（ ）人找到工作才能保证一定有50人的专业相同。", "opts": [{"key": "A", "text": "167"}, {"key": "B", "text": "168"}, {"key": "C", "text": "170"}, {"key": "D", "text": "175"}], "ans": "B", "hack": "识别标志词<strong>“至少……才能保证……”</strong>，锁定最不利构造。要保证50人同专业，最倒霉就是每个专业差1人凑不够（49人），统计学总共才20人全部拿完：<code>49 + 49 + 49 + 20 = 167</code>，最后 <strong>+1 = 168</strong>！注意选项 A.167 正是出题人埋的“忘了+1”陷阱，顺带还触发了技巧25「+1原则」，直秒 <strong>B</strong>！", "math": "最不利情况为每个专业最多有49人找到工作，统计学仅20人全部计入，则最不利情况数为 49 + 49 + 49 + 20 = 167 人。在此基础上再任意增加1人，必然有某一专业达到50人，故至少需要 167 + 1 = 168 人。选 B。", "tip": "口诀：<strong>“见至少保证，全取 N−1，不够全拿走，最后必 +1”</strong>。务必防住“没+1”的干扰项！", "svg": ""}, {"idx": 2, "partId": "part1", "partNum": "第一篇", "partTitle": "题干直秒型", "orig": "技巧 26", "name": "倍数特性（数字特性法）", "prio": "高频必背", "high": true, "rule": "题干中出现<strong>比例、比值、分数、百分数</strong>（如 A∶B = m∶n，且 m、n 互质），则 A 必为 m 的倍数，B 必为 n 的倍数，<strong>A+B 必为 (m+n) 的倍数</strong>。", "source": "2024年浙江省考《行测》（C类）第61题", "stem": "某公司招聘员工，来应聘的男女人数比是 18∶17，最后被录取的有280人，其中男女人数比是 3∶4，未被录取的男女人数比是 6∶5。问来应聘的共有多少人？", "opts": [{"key": "A", "text": "630"}, {"key": "B", "text": "720"}, {"key": "C", "text": "1050"}, {"key": "D", "text": "1400"}], "ans": "C", "hack": "① 应聘男女比 18∶17 → 总人数必是 <code>18 + 17 = 35</code> 的倍数，排除 B（720不能被35整除）；② 未录取人数 = 总人数 − 280，男女比 6∶5 → <code>总人数 − 280</code> 必是 <code>6 + 5 = 11</code> 的倍数！逐一代入：630−280=350（×）、<strong>1050−280=770（=11×70，✓）</strong>、1400−280=1120（×），5秒不列方程直秒 <strong>C</strong>！", "math": "录取280人按3∶4分配，得录取男120人、女160人。设来应聘男18x人、女17x人，则未录取男女比为 (18x−120)/(17x−160) = 6/5，解得 90x−600 = 102x−960，即 12x = 360，x = 30。故应聘总人数为 (18+17)×30 = 1050 人。选 C。", "tip": "遇到“比例 + 整数人数”的题，先扫一眼选项整除性，80% 能直接排除 2–3 个选项甚至一秒出答案。", "svg": ""}, {"idx": 3, "partId": "part1", "partNum": "第一篇", "partTitle": "题干直秒型", "orig": "技巧 23", "name": "最大信息化（同位高频交集）", "prio": "高频必背", "high": true, "rule": "选项由<strong>多段信息拼接</strong>（如“盈/亏 + 金额”、“多/少 + 数值”、“a∶b∶c”连比）时，分别统计<strong>同一位置出现次数最多的词或数字</strong>，取其交集直接锁定答案！", "source": "2025年多省联考《行测》（湖北Q57 / 湖南Q56 / 安徽Q31 / 河北Q73）", "stem": "小明在网络二手交易平台按照每张150元的价格转手了两张珍藏版CD，其中一张盈利25%，另一张亏损25%，则小明转手这两张CD总的盈亏情况是：", "opts": [{"key": "A", "text": "不盈不亏"}, {"key": "B", "text": "盈利20元"}, {"key": "C", "text": "亏损20元"}, {"key": "D", "text": "亏损25元"}], "ans": "C", "hack": "本题正是原秘籍手绘配图的<strong>真题原题</strong>！把选项拆成「盈亏方向」+「金额」两列观察：<br/>• 方向列：盈利（1次）、<strong>亏损（2次，C/D）</strong>；<br/>• 金额列：<strong>20元（2次，B/C）</strong>、25元（1次）。<br/>最大信息交集 = <strong>“亏损” + “20元”</strong> → 1秒直秒 <strong>C</strong>！", "math": "两张CD售价均为150元：盈利25%那张的成本 = 150 ÷ (1+25%) = 120元；亏损25%那张的成本 = 150 ÷ (1−25%) = 200元。总成本 = 120 + 200 = 320元，总售价 = 150×2 = 300元，净亏损 320 − 300 = 20元。选 C。", "tip": "出题人设置干扰项的心理：常把正确答案拆开，一半保留（比如保留“亏损”改数字25），一半取反（保留“20元”把亏损改盈利），所以高频交集往往就是真身！", "svg": ""}, {"idx": 4, "partId": "part1", "partNum": "第一篇", "partTitle": "题干直秒型", "orig": "技巧 30", "name": "结合生活常识找选项", "prio": "实用速判", "high": false, "rule": "涉及明显生活常识的题目（如<strong>限高约2.2m、结婚22–25岁、步行约5km/h、高速限速120km/h、上班/开工8:00–9:00</strong>等），直接结合现实合理范围排错选对。", "source": "2025年国考《行测》（行政执法卷）第66题", "stem": "甲、乙、丙3台收割机每小时均能收割2亩小麦，三台机器上午先后开始收割工作，12:00时甲收割的面积是乙的1.5倍，且比丙多收割6亩，16:00时3台收割机共收割了50亩，问乙是何时开始工作的？", "opts": [{"key": "A", "text": "6:00"}, {"key": "B", "text": "7:00"}, {"key": "C", "text": "8:00"}, {"key": "D", "text": "9:00"}], "ans": "C", "hack": "结合题干“三台机器上午先后开工”与常规作业时间常识：甲开工最早（比乙早一半时间），乙排第二，丙排第三。若乙6:00开工，则甲需凌晨3:00开工（严重违背农作常识！）；若乙7:00开工，甲需4:30开工（也不现实）；唯有乙在常规上班点 <strong>8:00</strong> 开工，甲为6:00天亮开工、丙为9:00开工，完全符合日常作息，直秒 <strong>C</strong>！", "math": "12:00至16:00共4小时，3台机器共收割 3×4×2 = 24亩，故12:00前共收割 50−24 = 26亩。设乙12:00前工作x小时（收割2x亩），则甲收割3x亩，丙收割(3x−6)亩。列式：3x + 2x + (3x−6) = 26，解得 8x = 32，x = 4小时。12:00往前推4小时即为 8:00。选 C。", "tip": "公考命题高度贴近现实生活，算完或蒙题前先问自己一句：“这个数字在现实里合理吗？”往往能瞬间排掉荒谬选项。", "svg": ""}, {"idx": 5, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 13①", "name": "排列组合：两项之和等于另一项，直选该项", "prio": "高频必背", "high": true, "rule": "排列组合题（问“多少种方法/方式/方案”），若发现<strong>某两个选项相加恰好等于第三个选项</strong>，直接选那个“和”选项！（<strong>优先级最高</strong>）", "source": "2024年天津市考《行测》第8题", "stem": "为弘扬耕读文化，某校打造多样化“校外+校内”耕读文化教育基地，有种植、绘画、编织、美食四个主题基地供同学们选学。假设每位学生选择1个主题基地参与学习，那么甲、乙、丙、丁4名学生中至少有3名学生选择不同主题基地的方法有多少种？", "opts": [{"key": "A", "text": "24"}, {"key": "B", "text": "60"}, {"key": "C", "text": "144"}, {"key": "D", "text": "168"}], "ans": "D", "hack": "一眼扫选项：<code>24 (A) + 144 (C) = 168 (D)</code>！题干问“至少有3名不同”，必然分“恰好3个不同”和“4个全不同”两类相加，出题人贴心地把两类结果分别放进了 A 和 C，总和就是 <strong>D. 168</strong>！（同类加练：2025多省联考湖北Q70游览景点 <code>A.6 B.18 C.24 D.60</code>，同样 <code>6+18=24</code> 直秒 C！）", "math": "分类计数：① 4人所选基地全不同：A(4,4) = 24 种；② 恰好有3个不同基地（即2人同基地、另2人各选不同基地）：先选2人捆绑 C(4,2)=6，再从4个基地选3个全排列 A(4,3)=24，共 6×24 = 144 种。合计 24 + 144 = 168 种。选 D。", "tip": "原理揭秘：分类加法计数题中，漏算其中一类恰恰是考生最常犯的错，出题人必定把两个子分类放进干扰项，直接找 A+B=C 就是顺藤摸瓜！", "svg": ""}, {"idx": 6, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 13②", "name": "概率问题：两项相加等于 1，优先二选一", "prio": "高频必背", "high": true, "rule": "概率题中若出现<strong>两个选项相加等于 1（或 100%）</strong>，答案极大概率就在这组“互补选项”中！再结合题干判断事件容易发生（选大）还是难发生（选小）。", "source": "2021年联考《行测》（河南Q26 / 重庆Q60）", "stem": "某公司职员小王要乘坐公司班车上班，班车到站点的时间为上午7点到8点之间，班车接人后立刻开走；小王到站点的时间为上午6点半至7点半之间。假设班车和小王到站的概率是相等（均匀分布）的，那么小王能够坐上班车的概率为：", "opts": [{"key": "A", "text": "1/8"}, {"key": "B", "text": "3/4"}, {"key": "C", "text": "1/2"}, {"key": "D", "text": "7/8"}], "ans": "D", "hack": "扫选项瞬间发现互补对：<code>A (1/8) + D (7/8) = 1</code>！直接排除 B、C。再凭常识直觉看题干：小王（6:30–7:30）比班车（7:00–8:00）整体早半小时，只要小王在7点前到就100%坐得上，7点后到也有很大机会坐上，明显是<strong>大概率事件</strong> → 2秒直秒 <strong>D. 7/8</strong>！", "math": "几何概型：设班车到站时间 y∈[7,8]，小王到站时间 x∈[6.5,7.5]，总样本空间为 1×1=1 的正方形。小王“坐不上车”需满足 x > y，即两人均在 [7,7.5] 到达且小王更晚，对应直角边为0.5的等腰直角三角形，面积 = (1/2)×0.5×0.5 = 1/8。故能坐上车的概率 = 1 − 1/8 = 7/8。选 D。", "tip": "命题逻辑：正难则反！很多概率题要用 1 − P(反面) 求解，出题人专设 P(反面) 做陷阱，正好送我们一组和为 1 的超级线索。", "svg": ""}, {"idx": 7, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 13③", "name": "概率问题：掐头去尾（排 A/D，看概率高低选 B/C）", "prio": "高频必背", "high": true, "rule": "概率题若无“相加等于1”特征，使用<strong>掐头去尾法（排除最大最小/排除 A、D）</strong>，再估摸题干限制条件多寡：概率偏大选剩下两个中大的，概率偏小选小的。", "source": "2026年国考《行测》（副省级）第70题", "stem": "4人参加乒乓球比赛，每2人对战一场，甲战胜乙的概率是0.4，乙战胜丙的概率是丙战胜丁概率的2倍。已知乙在比赛中对甲、丙均取胜的概率是0.18，问丙战胜丁的概率是：", "opts": [{"key": "A", "text": "0.1"}, {"key": "B", "text": "0.12"}, {"key": "C", "text": "0.15"}, {"key": "D", "text": "0.3"}], "ans": "C", "hack": "选项无互补对，直接掐头去尾排除 A(0.1) 和 D(0.3)，锁定 B(0.12) 与 C(0.15)。题干给出乙对甲丙均胜概率 0.18（注意 0.18 是 3 和 6 的倍数，而 0.6×0.3=0.18，一半就是 0.15），且 0.15 比 0.12 偏大更贴合 0.18 的整除结构，秒选 <strong>C. 0.15</strong>！", "math": "甲胜乙概率为 0.4，则乙胜甲概率为 1 − 0.4 = 0.6。设丙胜丁概率为 x，则乙胜丙概率为 2x。由独立事件乘法公式：0.6 × 2x = 0.18，解得 1.2x = 0.18，x = 0.15。选 C。", "tip": "概率/排列组合三板斧顺序切记：<strong>① 优先看相加相等（排列组合）/相加为1（概率） → ② 没有再用掐头去尾定 B/C</strong>。", "svg": ""}, {"idx": 8, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 14", "name": "追及问题（选第二大）", "prio": "高频必背", "high": true, "rule": "题干出现<strong>“追上、追到、追及、赶上”</strong>等提示词时，将四个数值选项排序，<strong>优先选第二大的选项</strong>！", "source": "2015年国考《行测》（副省级）第70题", "stem": "甲、乙两名运动员在400米的环形跑道上练习跑步，甲出发1分钟后乙同向出发，乙出发2分钟后第一次追上甲，又过了8分钟，乙第二次追上甲，此时乙比甲多跑了250米，问两人出发地相隔多少米？", "opts": [{"key": "A", "text": "200"}, {"key": "B", "text": "150"}, {"key": "C", "text": "100"}, {"key": "D", "text": "50"}], "ans": "B", "hack": "题干赫然出现两次<strong>“追上”</strong>，典型环形追及问题！四个选项数值排序为 50、100、<strong>150</strong>、200，第二大的数是 <strong>150</strong> → 3秒直秒 <strong>B</strong>！", "math": "第一次追上到第二次追上耗时8分钟，路程差恰为一圈400米，故速度差 v乙−v甲 = 400÷8 = 50米/分。乙共跑 2+8 = 10分钟，这10分钟内乙比甲多跑 50×10 = 500米；而总计乙仅比甲多跑250米，说明甲独自先跑的1分钟跑了 500−250 = 250米。又因乙用2分钟第一次追上甲（追了 50×2 = 100米），故出发地相隔 250 − 100 = 150米。选 B。", "tip": "注意区分普通行程（技巧16找6的倍数）与追及问题（技巧14选第二大）——见到“追上/追到”优先按追及处理！", "svg": ""}, {"idx": 9, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 15①", "name": "几何问题①：目测 / 尺量同比例估算", "prio": "高频必背", "high": true, "rule": "求线段长、面积或体积且<strong>附有标准配图</strong>时，直接用题干已知长度作参照，<strong>目测或拿直尺/身份证（长 8.56cm）实测同比例估算</strong>！", "source": "2025年多省联考《行测》（湖北Q64 / 湖南Q61）", "stem": "为丰富儿童的暑假生活，某公园在半径为 20√2 米的半圆形水池旁修建了一个弯月形儿童戏水池（如下图所示）。该弯月形戏水池可看作是由半径为20米的半圆 O' 和半径为 20√2 米的半圆 O 的圆弧围成的阴影部分，圆心距 OO' 为20米且 OO' 垂直于直径 AB，那么该戏水池的面积为多少平方米？", "opts": [{"key": "A", "text": "400"}, {"key": "B", "text": "200π"}, {"key": "C", "text": "800"}, {"key": "D", "text": "400π"}], "ans": "A", "hack": "不会算“希波克拉底月牙”也完全不怕！直接看图目测：半径20米的整个小半圆 O' 面积是 <code>(1/2)π×20² = 200π ≈ 628</code>，而阴影弯月只是小半圆挖掉下面一大块弓形后剩下的部分，<strong>肉眼可见明显小于 200π（628）</strong>！扫一眼选项：B(628)、C(800)、D(1256) 全都 ≥ 628，唯一小于 628 的只有 <strong>A. 400</strong>，2秒秒杀！", "math": "连接 OA、OB，由 OO'=20、O'A=O'B=20 且 OO'⊥AB，得 △OAB 为等腰直角三角形，∠AOB=90°，OA=OB=20√2。扇形 OAB 面积 = (90°/360°)π(20√2)² = 200π；下方弓形面积 = 扇形OAB − △OAB = 200π − (1/2)×40×20 = 200π − 400。因此阴影面积 = 半圆O' − 弓形 = 200π − (200π − 400) = 400。选 A。", "tip": "国省考几何图绝大多数按精确比例绘制！考场记得带把透明直尺（或用身份证 8.56cm×5.4cm 估比），不会算面积也能靠放缩法秒排错项。", "svg": "\n<svg viewBox=\"0 0 250 130\" class=\"geom-svg\" xmlns=\"http://www.w3.org/2000/svg\">\n  <path d=\"M 69 62 A 54 54 0 0 1 177 62 A 76.4 76.4 0 0 0 69 62 Z\" fill=\"#B92B27\" fill-opacity=\"0.16\" stroke=\"#B92B27\" stroke-width=\"1.4\"/>\n  <path d=\"M 46.6 116 A 76.4 76.4 0 0 1 199.4 116 Z\" fill=\"none\" stroke=\"#141414\" stroke-width=\"1.3\"/>\n  <line x1=\"69\" y1=\"62\" x2=\"177\" y2=\"62\" stroke=\"#141414\" stroke-width=\"1\" stroke-dasharray=\"3 2\"/>\n  <line x1=\"123\" y1=\"62\" x2=\"123\" y2=\"116\" stroke=\"#555\" stroke-width=\"1\" stroke-dasharray=\"2 2\"/>\n  <line x1=\"123\" y1=\"116\" x2=\"69\" y2=\"62\" stroke=\"#999\" stroke-width=\"0.9\" stroke-dasharray=\"2 2\"/>\n  <line x1=\"123\" y1=\"116\" x2=\"177\" y2=\"62\" stroke=\"#999\" stroke-width=\"0.9\" stroke-dasharray=\"2 2\"/>\n  <circle cx=\"123\" cy=\"116\" r=\"2.2\" fill=\"#141414\"/>\n  <circle cx=\"123\" cy=\"62\" r=\"2.2\" fill=\"#B92B27\"/>\n  <text x=\"123\" y=\"128\" text-anchor=\"middle\" font-size=\"10\" fill=\"#141414\" font-weight=\"600\">O</text>\n  <text x=\"123\" y=\"55\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#B92B27\" font-weight=\"600\">O'</text>\n  <text x=\"60\" y=\"65\" text-anchor=\"middle\" font-size=\"10\" fill=\"#141414\">A</text>\n  <text x=\"186\" y=\"65\" text-anchor=\"middle\" font-size=\"10\" fill=\"#141414\">B</text>\n  <text x=\"123\" y=\"33\" text-anchor=\"middle\" font-size=\"9\" fill=\"#B92B27\" font-weight=\"600\">阴影戏水池</text>\n  <text x=\"130\" y=\"92\" font-size=\"8.5\" fill=\"#444\">OO'=20</text>\n  <text x=\"54\" y=\"102\" font-size=\"8.5\" fill=\"#555\">R=20√2</text>\n</svg>\n"}, {"idx": 10, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 15②", "name": "几何问题②：选项有根号，则找整数选项", "prio": "高频必背", "high": true, "rule": "几何题选项中<strong>既有带根号（如 √2、√3）的选项，又有纯整数/纯整数比选项</strong>时，优先直接选<strong>整数选项</strong>！", "source": "2022年江苏省考《行测》（A类）第59题", "stem": "小明买了一块直三棱柱形蛋糕 ABC-A'B'C'，其中 ∠ABC = 90°，∠BAC = 30°。为与两位室友分享，他切出一小块和原蛋糕形状相同的蛋糕 ADE-A'D'E'，其体积与原蛋糕的体积之比为 1∶3。若 ∠ADE = 90°，则线段 AE 与 EB 的长度之比为：", "opts": [{"key": "A", "text": "2∶1"}, {"key": "B", "text": "3∶2"}, {"key": "C", "text": "√3∶1"}, {"key": "D", "text": "2∶√3"}], "ans": "A", "hack": "看到几何题选项 C、D 带着吓人的 <strong>√3</strong>，先别慌！套用「有根号找整数」口诀直接排除 C、D，从 A(2∶1) 和 B(3∶2) 挑；再结合“和两位室友分享（共3人，切出1/3）”以及选项 A 是最简洁的 2∶1（恰好 2+1=3 份），直秒 <strong>A. 2∶1</strong>！", "math": "两块直三棱柱高相同，体积比 1∶3 即底面相似三角形 △ADE 与 △ABC 面积比为 1∶3，故对应边相似比为 1∶√3。因 ∠A=30°、∠ADE=∠ABC=90°，设 DE=a，则斜边 AE=2a、AD=√3a；按相似比放缩得 △ABC 中 BC=√3a，短直角边对30°故 AB = BC·√3 = 3a。由此 EB = AB − AE = 3a − 2a = a，故 AE∶EB = 2a∶a = 2∶1。选 A。", "tip": "出题人常用 √2、√3 吓唬没动笔的考生，其实在 30°-60°-90° 或等腰直角三角形中，根号相乘（√3×√3=3）经常恰好消成漂亮整数！", "svg": "\n<svg viewBox=\"0 0 245 122\" class=\"geom-svg\" xmlns=\"http://www.w3.org/2000/svg\">\n  <polygon points=\"34,102 194,102 34,10\" fill=\"#F7F6F2\" stroke=\"#141414\" stroke-width=\"1.3\"/>\n  <polygon points=\"194,102 87.3,102 114,55.8\" fill=\"#B92B27\" fill-opacity=\"0.16\" stroke=\"#B92B27\" stroke-width=\"1.4\"/>\n  <polyline points=\"34,93 43,93 43,102\" fill=\"none\" stroke=\"#141414\" stroke-width=\"1\"/>\n  <text x=\"202\" y=\"106\" font-size=\"10.5\" fill=\"#141414\" font-weight=\"600\">A</text>\n  <text x=\"23\" y=\"106\" font-size=\"10.5\" fill=\"#141414\" font-weight=\"600\">B</text>\n  <text x=\"23\" y=\"15\" font-size=\"10.5\" fill=\"#141414\" font-weight=\"600\">C</text>\n  <text x=\"118\" y=\"49\" font-size=\"10.5\" fill=\"#B92B27\" font-weight=\"600\">D</text>\n  <text x=\"87\" y=\"115\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#B92B27\" font-weight=\"600\">E</text>\n  <text x=\"170\" y=\"97\" font-size=\"8.5\" fill=\"#444\">30°</text>\n  <text x=\"136\" y=\"90\" text-anchor=\"middle\" font-size=\"8.5\" fill=\"#B92B27\" font-weight=\"600\">面积 1/3</text>\n  <text x=\"60\" y=\"115\" text-anchor=\"middle\" font-size=\"8.5\" fill=\"#555\">EB=a</text>\n  <text x=\"140\" y=\"115\" text-anchor=\"middle\" font-size=\"8.5\" fill=\"#B92B27\">AE=2a</text>\n</svg>\n"}, {"idx": 11, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 15③", "name": "几何问题③：题干出现“半径”，选第二小", "prio": "高频必背", "high": true, "rule": "几何题干中明确给出<strong>“半径”</strong>条件时，将四个选项排序，<strong>优先选第二小的选项</strong>！", "source": "2015年国考《行测》（地市级）第69题", "stem": "现要在一块长25公里、宽8公里的长方形区域内设置哨塔，每个哨塔的监视半径为5公里。如果要求整个区域内的每个角落都能被监视到，则至少需要设置多少个哨塔？", "opts": [{"key": "A", "text": "7"}, {"key": "B", "text": "6"}, {"key": "C", "text": "5"}, {"key": "D", "text": "4"}], "ans": "C", "hack": "题干出现关键词<strong>“半径为5公里”</strong>，同时问“至少需要设置多少个”（双重叠加技巧01最值问题“最小选第二小”！）。将选项 4、<strong>5</strong>、6、7 从小到大排序，第二小正是 <strong>5</strong>，毫不犹豫秒选 <strong>C</strong>！", "math": "要覆盖宽8公里的长方形，圆心应放在中轴线上（距上下边各4公里）。由勾股定理，半径5公里的圆在上下边界截得的水平覆盖长度 = 2×√(5²−4²) = 2×3 = 6公里。总长25公里，25 ÷ 6 = 4.17，向上取整至少需要 5 个哨塔。选 C。", "tip": "本题完美体现了“半径选第二小”+“至少选第二小”的双技共振，共振时命中率极高！", "svg": "\n<svg viewBox=\"0 0 260 108\" class=\"geom-svg\" xmlns=\"http://www.w3.org/2000/svg\">\n  <rect x=\"18\" y=\"16\" width=\"225\" height=\"72\" fill=\"#F7F6F2\" stroke=\"#141414\" stroke-width=\"1.3\"/>\n  <circle cx=\"45\" cy=\"52\" r=\"45\" fill=\"#B92B27\" fill-opacity=\"0.07\" stroke=\"#B92B27\" stroke-width=\"1\" stroke-dasharray=\"3 2\"/>\n  <circle cx=\"99\" cy=\"52\" r=\"45\" fill=\"#B92B27\" fill-opacity=\"0.07\" stroke=\"#B92B27\" stroke-width=\"1\" stroke-dasharray=\"3 2\"/>\n  <circle cx=\"153\" cy=\"52\" r=\"45\" fill=\"#B92B27\" fill-opacity=\"0.07\" stroke=\"#B92B27\" stroke-width=\"1\" stroke-dasharray=\"3 2\"/>\n  <circle cx=\"207\" cy=\"52\" r=\"45\" fill=\"#B92B27\" fill-opacity=\"0.07\" stroke=\"#B92B27\" stroke-width=\"1\" stroke-dasharray=\"3 2\"/>\n  <line x1=\"72\" y1=\"16\" x2=\"72\" y2=\"88\" stroke=\"#141414\" stroke-width=\"1\" stroke-dasharray=\"2 2\"/>\n  <line x1=\"45\" y1=\"52\" x2=\"72\" y2=\"16\" stroke=\"#B92B27\" stroke-width=\"1.3\"/>\n  <circle cx=\"45\" cy=\"52\" r=\"2.2\" fill=\"#B92B27\"/>\n  <text x=\"61\" y=\"38\" font-size=\"8.5\" fill=\"#B92B27\" font-weight=\"600\">R=5</text>\n  <text x=\"45\" y=\"102\" text-anchor=\"middle\" font-size=\"8.5\" fill=\"#444\">单塔覆盖 6km</text>\n  <text x=\"160\" y=\"102\" text-anchor=\"middle\" font-size=\"8.5\" fill=\"#141414\" font-weight=\"600\">25km ÷ 6km = 4.17 → 需 5 座</text>\n  <text x=\"9\" y=\"55\" text-anchor=\"middle\" font-size=\"8.5\" fill=\"#444\">8</text>\n</svg>\n"}, {"idx": 12, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 15④", "name": "几何问题④：题干出现“直径”，选最小", "prio": "高频必背", "high": true, "rule": "几何题干中明确给出<strong>“直径”</strong>条件时，将四个选项排序，<strong>优先选最小的选项</strong>！", "source": "2025年多省联考《行测》（湖北Q63 / 湖南Q65 / 安徽Q44）", "stem": "某三层高的露天平台每层可视作圆柱体（如下图所示）。已知每层高5米，下层直径100米，中层直径80米，上层直径68米，现要对平台的外表面进行清洁维护，共需要维护多少平方米？", "opts": [{"key": "A", "text": "3740π"}, {"key": "B", "text": "5256π"}, {"key": "C", "text": "6240π"}, {"key": "D", "text": "6496π"}], "ans": "A", "hack": "题干连着出现三个<strong>“直径”</strong>（100米、80米、68米），选项为递增排列的四个含 π 数值，套用「出现直径选最小」铁律，直接锁定最小值 <strong>A. 3740π</strong>！", "math": "外表面 = 三层裸露顶面之和 + 三层侧面积之和。从正上方俯视，三层裸露顶面恰好拼成一个直径100米（半径50米）的完整大圆，面积 = π×50² = 2500π；三层侧面积 = π(100+80+68)×5 = 1240π。总面积 = 2500π + 1240π = 3740π。选 A。", "tip": "为什么“直径”常选最小？因为出题人总把“忘记直径÷2算成半径（面积放大4倍）”的错解塞进大选项里！所以正确答案反而偏小！", "svg": "\n<svg viewBox=\"0 0 260 116\" class=\"geom-svg\" xmlns=\"http://www.w3.org/2000/svg\">\n  <ellipse cx=\"130\" cy=\"87\" rx=\"100\" ry=\"18\" fill=\"#EAE8E2\" stroke=\"#141414\" stroke-width=\"1.2\"/>\n  <rect x=\"30\" y=\"71\" width=\"200\" height=\"16\" fill=\"#EAE8E2\"/>\n  <line x1=\"30\" y1=\"71\" x2=\"30\" y2=\"87\" stroke=\"#141414\" stroke-width=\"1.2\"/>\n  <line x1=\"230\" y1=\"71\" x2=\"230\" y2=\"87\" stroke=\"#141414\" stroke-width=\"1.2\"/>\n  <ellipse cx=\"130\" cy=\"71\" rx=\"100\" ry=\"18\" fill=\"#F7F6F2\" stroke=\"#141414\" stroke-width=\"1.2\"/>\n\n  <ellipse cx=\"130\" cy=\"63\" rx=\"78\" ry=\"14\" fill=\"#F4E4E2\" stroke=\"#B92B27\" stroke-width=\"1.1\"/>\n  <rect x=\"52\" y=\"48\" width=\"156\" height=\"15\" fill=\"#F4E4E2\"/>\n  <line x1=\"52\" y1=\"48\" x2=\"52\" y2=\"63\" stroke=\"#B92B27\" stroke-width=\"1.1\"/>\n  <line x1=\"208\" y1=\"48\" x2=\"208\" y2=\"63\" stroke=\"#B92B27\" stroke-width=\"1.1\"/>\n  <ellipse cx=\"130\" cy=\"48\" rx=\"78\" ry=\"14\" fill=\"#FCF7F6\" stroke=\"#B92B27\" stroke-width=\"1.1\"/>\n\n  <ellipse cx=\"130\" cy=\"40\" rx=\"62\" ry=\"11\" fill=\"#E3E1DB\" stroke=\"#141414\" stroke-width=\"1.1\"/>\n  <rect x=\"68\" y=\"26\" width=\"124\" height=\"14\" fill=\"#E3E1DB\"/>\n  <line x1=\"68\" y1=\"26\" x2=\"68\" y2=\"40\" stroke=\"#141414\" stroke-width=\"1.1\"/>\n  <line x1=\"192\" y1=\"26\" x2=\"192\" y2=\"40\" stroke=\"#141414\" stroke-width=\"1.1\"/>\n  <ellipse cx=\"130\" cy=\"26\" rx=\"62\" ry=\"11\" fill=\"#FFFFFF\" stroke=\"#141414\" stroke-width=\"1.2\"/>\n\n  <text x=\"130\" y=\"29\" text-anchor=\"middle\" font-size=\"8.2\" fill=\"#141414\" font-weight=\"600\">上层直径 68m（高5m）</text>\n  <text x=\"130\" y=\"57\" text-anchor=\"middle\" font-size=\"8.2\" fill=\"#B92B27\" font-weight=\"600\">中层直径 80m（高5m）</text>\n  <text x=\"130\" y=\"82\" text-anchor=\"middle\" font-size=\"8.2\" fill=\"#141414\" font-weight=\"600\">下层直径 100m（高5m）</text>\n  <text x=\"130\" y=\"112\" text-anchor=\"middle\" font-size=\"8\" fill=\"#55595E\">俯视顶面等价直径100m圆（2500π）+ 三层侧面（1240π）</text>\n</svg>\n"}, {"idx": 13, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 16", "name": "行程问题（找 6 的倍数，合成因子越多越好）", "prio": "高频必背", "high": true, "rule": "普通行程问题，优先在选项中<strong>找 6 的倍数</strong>；若有多个 6 的倍数，选<strong>合成因子（因数）最多</strong>的那个数！", "source": "2024年国考《行测》（副省级）第66题", "stem": "甲和乙两辆车同时从A地出发匀速开往B地，甲车出发时的速度比乙车快20%，但乙车行驶1个小时后速度加快30千米/小时继续匀速行驶，又用了3小时与甲车同时抵达，问A、B两地相距多少千米？", "opts": [{"key": "A", "text": "540"}, {"key": "B", "text": "510"}, {"key": "C", "text": "600"}, {"key": "D", "text": "570"}], "ans": "A", "hack": "四个选项全都是 6 的倍数（540/510/600/570），立即比拼<strong>合成因子（因数）个数</strong>：<br/>• 510 = 2×3×5×17（16个因数，含质数17太“散”）；<br/>• 570 = 2×3×5×19（16个因数，含质数19太“散”）；<br/>• <strong>540 = 2²×3³×5（24个因数，同时能被 4、6、9、12、15、18、27 整除！）</strong>，且同时命中技巧05“有升有降排最大600最小510”，540 脱颖而出，直秒 <strong>A</strong>！", "math": "设乙车初速为 v，则甲车速度为 1.2v，乙车1小时后速度为 v+30。总行驶时间均为 1+3 = 4小时，路程相等：4×1.2v = v + 3(v+30)，即 4.8v = 4v + 90，解得 0.8v = 90，v = 112.5 km/h。故 A、B 相距 4.8 × 112.5 = 540 千米。选 A。", "tip": "注释牢记：因数多的数叫“更偏整”（如 12、24、60、180、360、540），行程题常涉及时间 60 分钟/小时的换算，6 和 9 的倍数出现频率极高。", "svg": ""}, {"idx": 14, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 17", "name": "经济利润问题（排最大最小，选中间最整的数）", "prio": "高频必背", "high": true, "rule": "经济利润问题（成本、定价、打折、售价、利润等），先<strong>排除最大和最小</strong>，在剩下的两个中间选项里选<strong>最整的数</strong>（整百/整十/因数多）！", "source": "2019年国考《行测》（副省级）第63题", "stem": "从A市到B市的机票如果打6折，包含接送机出租车交通费90元、机票税费60元在内的总乘机成本是机票打4折时总乘机成本的1.4倍。问从A市到B市的全价机票价格（不含税费）为多少元？", "opts": [{"key": "A", "text": "1200"}, {"key": "B", "text": "1250"}, {"key": "C", "text": "1500"}, {"key": "D", "text": "1600"}], "ans": "C", "hack": "识别经济利润题（打折 + 成本）。第一步：排除最小 A(1200) 和最大 D(1600)；第二步：对比中间两个数 B(1250) 与 <strong>C(1500)</strong> —— 1500 尾数带两个 0（整百）且因数多达 24 个，比 1250 明显更整 → 3秒直秒 <strong>C. 1500</strong>！", "math": "设全价机票为 x 元，杂费（交通费+税费）= 90 + 60 = 150元。依题意列方程：0.6x + 150 = 1.4 × (0.4x + 150)，化简得 0.6x + 150 = 0.56x + 210，即 0.04x = 60，解得 x = 1500 元。选 C。", "tip": "商品进价、定价、全价在公考里往往设定为 100、200、500、1000、1500 这类极好算的整百数，掐头去尾再找整百百发百中！", "svg": ""}, {"idx": 15, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 18", "name": "工程问题（找 6 或 6 的倍数，兼顾更偏整）", "prio": "高频必背", "high": true, "rule": "工程问题（完工天数、效率合作、加工生产等），优先在选项中找 <strong>6 或者 6 的倍数</strong>，同时留意合成因子更多、更偏整的数！", "source": "2015年国考《行测》（地市级）第63题", "stem": "某农场有36台收割机，要收割完所有的麦子需要14天时间。现收割了7天后增加4台收割机，并通过技术改造使每台机器的效率提升5%，问收割完所有的麦子还需要几天？", "opts": [{"key": "A", "text": "3"}, {"key": "B", "text": "4"}, {"key": "C", "text": "5"}, {"key": "D", "text": "6"}], "ans": "D", "hack": "典型工程效率变化题！扫一眼四个选项 3、4、5、<strong>6</strong>，里面直接坐着一个大大的 <strong>6</strong>（唯一的 6 的倍数，且因数有 1,2,3,6 共 4 个，比 3、4、5 都更偏整）→ 2秒直秒 <strong>D. 6</strong>！", "math": "赋值每台收割机原效率为1，则剩余7天工作量 = 36×7。增至40台且单台效率提5%后，总效率 = 40×1.05 = 42。故剩余所需天数 = (36×7) ÷ 42 = 6 天。（或比例法：效率比 36∶42 = 6∶7 → 时间比 7∶6，7天变6天。）选 D。", "tip": "注意和技巧21「日期问题」区分：工程问题侧重找 6 或 6 的倍数（如 6、12、18、24、30、36），而日期问题偏向选最大项。", "svg": ""}, {"idx": 16, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 19", "name": "和差倍比问题（选最小的）", "prio": "高频必背", "high": true, "rule": "识别和差倍比题（题干核心特征：<strong>有总和、有比例或倍数、求差或求倍数</strong>），没时间列方程时<strong>优先选最小的选项</strong>！", "source": "2024年国考《行测》（副省级）第65题", "stem": "甲乙两条生产线同一天开始生产某种产品，甲每天比前一天多生产m件，乙每天比前一天少生产2m件，第5天两条生产线的当日产量相同，且前5天乙的累计产量是甲的2倍。问第一天乙的产量是甲的多少倍？", "opts": [{"key": "A", "text": "6"}, {"key": "B", "text": "7"}, {"key": "C", "text": "4"}, {"key": "D", "text": "5"}], "ans": "C", "hack": "题干围绕“多m件、少2m件、累计2倍、问第一天几倍”展开，纯正的和差倍比题！四个选项 6、7、<strong>4</strong>、5 中，最小的数是 <strong>4</strong> → 直接锁定 <strong>C. 4</strong>！", "math": "设第5天产量均为 x，则甲每天构成公差 m 的等差数列（第3天为 x−2m，第1天为 x−4m），乙构成公差 −2m 的等差数列（第3天为 x+4m，第1天为 x+8m）。等差数列前5天累计产量 = 5×第3天产量，故 x+4m = 2(x−2m)，解得 x = 8m。第1天甲为 4m、乙为 16m，乙是甲的 16m÷4m = 4 倍。选 C。", "tip": "辨别口诀：没有速度/工程/几何/概率外壳，纯粹在“谁比谁多多少、谁是谁的几倍、总数是多少”之间倒腾的，就是和差倍比题！", "svg": ""}, {"idx": 17, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 20", "name": "年龄问题（先找倍数，没有直接选最小）", "prio": "高频必背", "high": true, "rule": "年龄问题优先结合题干<strong>找倍数关系（如3的倍数、年龄差不变）</strong>；若看不出倍数特征，<strong>直接选最小的选项</strong>！", "source": "2025年国考《行测》（副省级）第70题", "stem": "2024年甲、乙、丙三人的年龄之和与2034年甲的年龄相同，且甲、乙的年龄之差大于乙、丙的年龄之差。已知乙的年龄小于甲但大于丙，问2024年甲的年龄最小可能为多少岁？", "opts": [{"key": "A", "text": "13"}, {"key": "B", "text": "11"}, {"key": "C", "text": "10"}, {"key": "D", "text": "9"}], "ans": "D", "hack": "识别年龄问题！先找倍数特征（四个选项里 13、11、10 全无3的因数，唯有 <strong>9</strong> 是3的倍数），再看「直接选最小」—— <strong>D. 9</strong> 既是唯一合数倍数又是全场最小项，双重印证，直秒 <strong>D</strong>！", "math": "由题意：甲+乙+丙 = 甲+10 → 乙+丙 = 10。因 乙 > 丙，故 乙 ≥ 6。又 甲−乙 > 乙−丙 → 甲 > 2乙−丙 = 3乙−10。要让甲最小，取最小的 乙 = 6（此时丙 = 4），得 甲 > 3×6−10 = 8，故甲最小为 9 岁。选 D。", "tip": "年龄问题也是公考最适合<strong>“代入排除法”</strong>的题型，问“最小”就从最小项代起，往往代第一个就中！", "svg": ""}, {"idx": 18, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 21", "name": "日期时间问题（偏向选最大项）", "prio": "高频必背", "high": true, "rule": "日期星期类问题（如推算某日是星期几、某月有几天满足条件等），<strong>偏向选最大/最靠后的选项</strong>（注意与工程问题区分）。", "source": "2025年国考《行测》（副省级）第75题", "stem": "某门店星期一至星期五的日营业额均为1万元，星期六和星期日的日营业额均为2万元。某月1—16日的总营业额为22万元，问该月8日为：", "opts": [{"key": "A", "text": "星期三"}, {"key": "B", "text": "星期四"}, {"key": "C", "text": "星期五"}, {"key": "D", "text": "星期六"}], "ans": "D", "hack": "纯正日期星期推理题！选项按时间顺序递增：星期三、星期四、星期五、<strong>星期六</strong>，套用「日期问题偏向选最大项」，直接锁定最靠后的 <strong>D. 星期六</strong>！", "math": "一个完整星期（7天）的营业额 = 1×5 + 2×2 = 9万元。16天 = 2整周 + 余2天，这余2天的营业额 = 22 − 9×2 = 4万元，故余出的2天必为星期六和星期日（日均2万）。也就是说，1日和2日必为周六、周日（3—16日恰好2整周），因此1日是星期六，+7天后的8日也是星期六。选 D。", "tip": "口诀助记：每过7天星期不变，余数天数决定答案！算日期余数超快，实在没空就偏大蒙。", "svg": ""}, {"idx": 19, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 22", "name": "“谁比谁怎么样”类题（直接选 D）", "prio": "考场神技", "high": true, "rule": "当问题句式呈现<strong>“问 A 比 B ：”</strong>，选项呈“多X / 少X / 多Y / 少Y”四组对比形式时，没时间算可以<strong>直接选 D</strong>！", "source": "2024年国考《行测》（副省级）第62题", "stem": "甲、乙、丙和丁四个汽车租赁公司可用汽车数量比为 5∶4∶3∶2，现甲公司调度4辆汽车到丙公司，丁公司调度1辆汽车到乙公司后，丁公司可用汽车数量正好是丙公司的60%。问此时甲公司的可用汽车数量比乙公司：", "opts": [{"key": "A", "text": "少22辆"}, {"key": "B", "text": "多22辆"}, {"key": "C", "text": "少12辆"}, {"key": "D", "text": "多12辆"}], "ans": "D", "hack": "问题结尾经典句式：<strong>“问此时甲公司的可用汽车数量比乙公司：”</strong>，选项“少22 / 多22 / 少12 / 多12”！直接套用「谁比谁怎么样选 D」，1秒秒选 <strong>D. 多12辆</strong>！（顺便印证常识：原本甲5份比乙4份多，调完大概率还是甲多！）", "math": "设初始甲、乙、丙、丁分别有 5x、4x、3x、2x 辆。调度后丁为 (2x−1) 辆，丙为 (3x+4) 辆，依题意 (2x−1)/(3x+4) = 0.6，解得 2x−1 = 1.8x + 2.4 → 0.2x = 3.4 → x = 17。调度后甲 = 5×17−4 = 81 辆，乙 = 4×17+1 = 69 辆，甲比乙多 81 − 69 = 12 辆。选 D。", "tip": "如果还有3秒余裕，可以瞄一眼方向（谁原本基数大）：把“少”排掉后，在 B 和 D 里稳选 D！", "svg": ""}, {"idx": 20, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 27", "name": "天平问题（直接选 3 次，没 3 选 4）", "prio": "送分结论", "high": false, "rule": "天平找次品/称重问题（问<strong>最少/最多几次一定能称完</strong>），<strong>直接选 3 次，选项没有 3 次就选 4 次</strong>！", "source": "2017年422联考《行测》（河北Q43 / 湖北Q65 / 安徽Q34）", "stem": "体育彩票22选5中使用的22个彩球除编号不同外，其余完全一样。由于生产过程疏忽，22个彩球中有一个球的重量略重于其它球。现需用天平将该球找出，那么，在最优方案下，最多要使用天平：", "opts": [{"key": "A", "text": "3次"}, {"key": "B", "text": "4次"}, {"key": "C", "text": "5次"}, {"key": "D", "text": "6次"}], "ans": "A", "hack": "扫到“天平”+“最多/最少使用几次”，连球数都不用细看，口诀<strong>“直接选 3 次，没 3 选 4”</strong> → 1秒直秒 <strong>A. 3次</strong>！", "math": "天平称重核心结论（三分法）：已知次品偏重（或偏轻）时，称 n 次最多可从 3ⁿ 个球中找出次品。3² = 9 < 22 ≤ 27 = 3³，故最多只需 3 次（第1次 7 vs 7 留8；第2次把重的那组再三分；第3次从≤3个中 1 vs 1 即可锁死）。选 A。", "tip": "背后数学真相：因为 3³=27、3⁴=81，公考出题球数基本都在 10–80 之间，所以答案天然被数学定律锁死在 3 次或 4 次！", "svg": ""}, {"idx": 21, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 28", "name": "夜跑题 / 题干数字排重法", "prio": "专项秒杀", "high": false, "rule": "类似<strong>“夜跑题”</strong>等给出相邻月份次数求下月次数的周期题，<strong>题干中已经出现过的数字选项直接排除</strong>，从剩下的选项里蒙！", "source": "2025年国考《行测》（行政执法卷）第71题", "stem": "小张每周一到周四夜跑，周五到周日休息，已知某年2月他夜跑17次，3月夜跑19次，问4月他夜跑多少次？", "opts": [{"key": "A", "text": "16"}, {"key": "B", "text": "17"}, {"key": "C", "text": "18"}, {"key": "D", "text": "19"}], "ans": "A", "hack": "这正是大名鼎鼎的<strong>2025国考夜跑真题原型</strong>！题干已明确出现 <strong>17次</strong> 和 <strong>19次</strong>，直接叉掉 B(17) 和 D(19)，瞬间变成 A(16) 与 C(18) 二选一！再结合每周跑4次，4周固定16次、30天多出2天若全撞上休息日刚好就是16次，锁定 <strong>A. 16</strong>！", "math": "每周夜跑4次，任意连续28天必跑16次。2月跑17次 > 16次，说明是闰年2月29天且2月29日必夜跑；3月31天 = 28天(16次) + 前3天(3次)，故2月29日、3月1日、2日、3日连续4天全跑 → 必为周一至周四！由此推得3月31日也是周四，4月1日为周五。4月30天 = 28天(16次) + 4月29日(周五)、30日(周六)均休息 → 共跑 16 次。选 A。", "tip": "延伸用法：许多周期推算题中，出题人喜欢把题干里出现过的中间数原样放进干扰项，先划掉它们能立刻把胜率从 25% 拉到 50%！", "svg": ""}, {"idx": 22, "partId": "part2", "partNum": "第二篇", "partTitle": "高频题型专项", "orig": "技巧 29", "name": "分段计算 + 合并省钱类题型（选最小）", "prio": "专项秒杀", "high": false, "rule": "遇到<strong>分段计费</strong>（出租车起步价、阶梯水电费、个人所得税）或<strong>合并购买省钱</strong>类题型，没时间分段硬算时<strong>优先选最小选项</strong>！", "source": "2020年0822联考《行测》（河北卷）第66题", "stem": "某市出租车价格为：2公里以内8元，超过2公里不足5公里的部分，每公里2元；超过5公里不足8公里的部分，每公里3元；8公里以上的部分，每公里4元；不足1公里按1公里计算。某位乘客乘坐出租车花了20元，该出租车最多行驶了多少公里？", "opts": [{"key": "A", "text": "7"}, {"key": "B", "text": "8"}, {"key": "C", "text": "9"}, {"key": "D", "text": "10"}], "ans": "A", "hack": "一看“2公里以内8元、超过2公里不足5公里……”就是教科书级<strong>分段计费题</strong>！套用「分段计算选最小」口诀，直接锁定最小值 <strong>A. 7</strong>！（同时手算验证只需5秒：8 + 6 + 6 = 20元 → 2 + 3 + 2 = 7公里，丝滑命中！）", "math": "分段累加：① 0–2公里：8元；② 2–5公里（共3公里）：3×2 = 6元，前5公里合计 8+6 = 14元；③ 剩余 20−14 = 6元进入 5–8公里区间（每公里3元），可行 6÷3 = 2公里。故最多行驶 5 + 2 = 7 公里。选 A。", "tip": "避坑提示：分段计算其实不算难，核心是“分段算清、节点别漏”，若时间够建议直接分段加；若只剩10秒，直接蒙最小项！", "svg": ""}, {"idx": 23, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 10", "name": "三等差一特殊（选离特殊项近的）", "prio": "T0 最高优", "high": true, "rule": "四个选项中，有<strong>三个数构成等差数列</strong>，仅剩<strong>一个是打破等差的“特殊项”</strong>，直接选等差数列中<strong>离特殊项最近的那个数</strong>！", "source": "2021年国考《行测》（地市级）第61题", "stem": "某商场开展“助农销售”活动，凡购买某种农产品满300元者可获得一个礼盒，其中装有6种干货中的随机3种各1小袋，以及1袋小米或红豆。问内容不完全相同的礼盒共有多少种可能？", "opts": [{"key": "A", "text": "30"}, {"key": "B", "text": "40"}, {"key": "C", "text": "45"}, {"key": "D", "text": "50"}], "ans": "B", "hack": "选项结构堪称完美样本：<strong>40、45、50</strong> 构成公差为 5 的等差数列，而 <strong>A. 30</strong> 跳了 10 是打破规律的“特殊项”！三个等差项里离特殊项 30 最近的是谁？正是 <strong>B. 40</strong>！1秒直秒！", "math": "分步乘法计数：① 从6种干货中随机选3种：C(6,3) = (6×5×4)/(3×2×1) = 20 种；② 小米或红豆选1种：C(2,1) = 2 种。总可能数 = 20 × 2 = 40 种。选 B。", "tip": "这是所有选项技巧中<strong>优先级最高（T0）</strong>的一招！口诀：“三等差一特殊，抱紧特殊项大腿（选离它最近的等差项）！”", "svg": ""}, {"idx": 24, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 02", "name": "二倍关系（选 2 倍的；双 2 倍选 B/C 中的 2 倍）", "prio": "T1 极高频", "high": true, "rule": "选项中存在<strong>明显的 2 倍关系</strong>时，优先选 <strong>2 倍（较大）</strong>的那个；若同时出现两组 2 倍关系（如 50/100/200/300），则选 <strong>B 和 C 选项里那个 2 倍的</strong>！", "source": "2025年国考《行测》（行政执法卷）第68题", "stem": "张、王、李、赵4人的平均年龄为28岁，张、王的年龄之和比李大25岁，李、赵的年龄之和比张大27岁。已知张比王大2岁，问他们4人中年龄最大的比最小的大几岁？", "opts": [{"key": "A", "text": "5"}, {"key": "B", "text": "6"}, {"key": "C", "text": "3"}, {"key": "D", "text": "4"}], "ans": "B", "hack": "四元方程组看着头晕？直接扫选项：5、<strong>6</strong>、<strong>3</strong>、4 —— 存在唯一一组清晰二倍关系 <code>3 × 2 = 6</code>，而且 <strong>6</strong> 就在 B 选项！套用「二倍关系选 2 倍的那个」，2秒直秒 <strong>B. 6</strong>！（注：2025国考副省级Q66 <code>A.3 B.2.5 C.2 D.1.5</code> 同样唯一二倍 <code>1.5×2=3</code> 直秒 A.3！）", "math": "四人年龄和 = 28×4 = 112。由 张+王 = 李+25 与 李+赵 = 张+27 两式相加：112 = 李+张+52 → 张+李 = 60，进而 王+赵 = 52。又 张=王+2，代入 张+王=李+25 与 张+李=60 解得：李=31、张=29、王=27、赵=25。最大减最小 = 31 − 25 = 6 岁。选 B。", "tip": "二倍关系是准确率极高的王牌技巧！因为出题人常设“少乘2 / 漏算往返 / 半程”做一半值干扰项，答案天然是它的 2 倍。", "svg": ""}, {"idx": 25, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 08", "name": "等差数列（选第二小的）", "prio": "T1 极高频", "high": true, "rule": "当四个选项从小到大排列呈<strong>严格的等差数列</strong>（公差完全相等，如 18、22、26、30）时，<strong>直接选第二小的那个选项</strong>！", "source": "2026年国考《行测》（地市级）第68题", "stem": "小王从甲地匀速前往乙地，到达后立刻匀速返回。已知他去程的用时比返程多3小时，去程的速度是返程的40%，且往返的平均速度为40千米/小时，问甲、乙两地相距多少千米？", "opts": [{"key": "A", "text": "70"}, {"key": "B", "text": "140"}, {"key": "C", "text": "210"}, {"key": "D", "text": "280"}], "ans": "B", "hack": "扫选项：<code>70、140、210、280</code> —— 公差为 70 的<strong>教科书级严格等差数列</strong>！套用「等差数列选第二小」直秒 <strong>B. 140</strong>！（而且它同时触发技巧02“双二倍关系 70↔140、140↔280 选B/C中的2倍项”，双技共振锁死 B！）", "math": "去程与返程速度比 = 40%∶1 = 2∶5，路程相等则时间比 = 5∶2。去程比返程多 5−2 = 3 份，恰对应3小时，故去程5小时、返程2小时，往返共7小时。往返总路程 2S = 40×7 = 280 千米，单程 S = 140 千米。选 B。", "tip": "等差数列是国省考最经典的选项布局（如 10/20/30/40、70/140/210/280），选第二小的命中率显著高于两端！", "svg": ""}, {"idx": 26, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 01", "name": "最值问题（最大选第二大，最小选第二小）", "prio": "T1 极高频", "high": true, "rule": "题干问<strong>“最多 / 最大 / 最高”</strong>时，选四个选项中<strong>第二大</strong>的；问<strong>“最少 / 最小 / 最低 / 至少”</strong>（非最不利构造）时，选<strong>第二小</strong>的！", "source": "2021年国考《行测》（地市级）第64题 · 附2017国考双例对照", "stem": "某地10户贫困农户共申请扶贫小额信贷25万元。已知每人申请金额都是1000元的整数倍，申请金额最高的农户申请金额不超过申请金额最低农户的2倍，且任意2户农户的申请金额都不相同。问申请金额最低的农户最少可能申请多少万元信贷？", "opts": [{"key": "A", "text": "1.5"}, {"key": "B", "text": "1.6"}, {"key": "C", "text": "1.7"}, {"key": "D", "text": "1.8"}], "ans": "B", "hack": "问法直指<strong>“最少可能申请多少万元”</strong>，典型数列构造最值题！四个选项 1.5、<strong>1.6</strong>、1.7、1.8，套用「最小选第二小」，直接秒 <strong>B. 1.6</strong>！<br/><em>【“最大选第二大”真题对照】2017年国考（地市级）Q65：“某抗洪指挥部2/3在前线，增派6人后占75%，需保留至少10%在指挥中心，问<strong>最多</strong>还能再增派多少人？A.8 B.9 C.10 D.11” → 第二大 <strong>C. 10</strong> 同样精准命中！</em>", "math": "设最低户申请 x 万元，要使 x 最小则其余9户尽量大：最高为 2x，依次递减 0.1 万元直至第9户 (2x−0.8)。总和 = x + [2x + (2x−0.1) + … + (2x−0.8)] = 19x − 3.6 = 25，解得 x = 28.6÷19 ≈ 1.505。问“最少”且须为0.1万整数倍，向上取整得 1.6 万元。选 B。", "tip": "为什么最值总中第二大/第二小？因为计算结果常带小数点（如 1.505），向上取整得 1.6，而 1.5 是极值下界干扰项，故答案稳落次极值！", "svg": ""}, {"idx": 27, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 09", "name": "等比数列（选最小的）", "prio": "T2 中高频", "high": false, "rule": "当四个选项从小到大呈<strong>严格的等比数列</strong>（如 8、12、18、27 或 3、6、12、24）时，<strong>直接选最小的那个选项</strong>！", "source": "2025年国考《行测》（行政执法卷）第69题", "stem": "将甲、乙两种设备各5件全部分配给A、B、C三个车间，要求每个车间分配两种设备至少各1件，A车间分配的设备总数比其他任一车间都多，B车间分配的甲设备多于乙设备，问有多少种不同的分配方式？", "opts": [{"key": "A", "text": "3"}, {"key": "B", "text": "6"}, {"key": "C", "text": "12"}, {"key": "D", "text": "24"}], "ans": "A", "hack": "扫选项：<code>3、6、12、24</code> —— 公比为 2 的<strong>严格等比数列</strong>！套用「等比数列选最小」，直接秒选 <strong>A. 3</strong>！（注意：本题不要误用二倍关系，因四个数整体呈等比结构，且限制条件极多导致情况数很少！）", "math": "每个车间先保底分1甲1乙，剩2甲2乙待分。因B车间甲>乙，分情况枚举剩余2甲2乙的分配：① B分(1甲,0乙)：A须总数严格大于B(3件)和C，故A分(1甲,2乙)或(0甲,2乙)不行→仅(1甲,2乙)给A、C得(0,0)共1种，或A(1甲,1乙)、C(0,1)共1种；② B分(2甲,0乙)：A须>4件，需分(0甲,2乙)总数4件不大于B（舍）；③ B分(2甲,1乙)：A总数最大3<5（舍）；④ 另检查 B(1甲,0乙)、A(0甲,2乙)总数4>3且C(1甲,0乙)总数3 → 有效！合计恰有 3 种分配方式。选 A。", "tip": "对比速记：<strong>等差选第二小，等比选最小</strong>，千万别记反！", "svg": ""}, {"idx": 28, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 11", "name": "三同求异（三个长得差不多，直接选特殊的）", "prio": "T2 中高频", "high": false, "rule": "四个选项中有<strong>三个长得差不多</strong>（比如都是整数、都是整十数、尾数或格式相同），唯独<strong>一个显得“格格不入”</strong>，直接选那个特殊的！", "source": "2023年北京市考《行测》第66题", "stem": "企业生产1件甲产品需要20千克A原料，在改进生产技术后，一吨A原料可以生产的甲产品数量比以前多了30件，则生产1件甲产品需要的A原料比之前节约了多少千克？", "opts": [{"key": "A", "text": "5"}, {"key": "B", "text": "6"}, {"key": "C", "text": "7.5"}, {"key": "D", "text": "9"}], "ans": "C", "hack": "看选项长相：A. 5（整数）、B. 6（整数）、D. 9（整数），唯独 <strong>C. 7.5</strong> 是唯一带小数点的“异类”！出题人绝不会平白无故凑出一个 7.5 来当陪跑，套用「三同求异」，1秒直秒 <strong>C. 7.5</strong>！", "math": "1吨 = 1000千克。改进前可生产 1000 ÷ 20 = 50 件；改进后可生产 50 + 30 = 80 件，此时每件耗料 1000 ÷ 80 = 12.5 千克。每件节约 20 − 12.5 = 7.5 千克。选 C。", "tip": "注意和技巧07「有零有整」的区别：技巧07是“三个乱七八糟带零头（3840/4450/5680），一个极整（5000）”；技巧11是“三个都规规矩矩（10/30/40 或 5/6/9），冒出一个特立独行的怪数（36 或 7.5）”，本质都是<strong>抓出鹤立鸡群的唯一异类</strong>！", "svg": ""}, {"idx": 29, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 12", "name": "范围问题（直接蒙中间带范围项，通常是 B/C）", "prio": "T2 中高频", "high": false, "rule": "当选项是区间范围（如“A.不到X、B.X–Y之间、C.Y–Z之间、D.超过Z”）时，<strong>直接排除两端开区间（A、D），锁定中间带范围的 B、C</strong>，再结合其他技巧二选一！", "source": "2022年国考《行测》（地市级）第62题", "stem": "企业列出500万元设备采购预算，如用于购买 x 台进口设备，最后剩余20万元。经董事会研究后，决定购买质量更高的同类国产设备，单价仅为进口设备的75%。当前预算可购买 x+3 台，最后剩余5万元。问国产设备的单价在以下哪个范围内？", "opts": [{"key": "A", "text": "不到30万元/台"}, {"key": "B", "text": "30—40万元/台之间"}, {"key": "C", "text": "40—50万元/台之间"}, {"key": "D", "text": "50万元/台以上"}], "ans": "C", "hack": "标准四段式范围选项！第一步直接干掉“不到30”和“50以上”，只看中间闭区间 <strong>B、C</strong>！再瞟一眼题干：国产预算用了 495 万元，495 = 9×55 = 11×45，单价 45 万完美落入 <strong>C. 40—50万元/台之间</strong>，轻松拿下！", "math": "进口总花 500−20 = 480 万，国产总花 500−5 = 495 万。由国产单价是进口的 75%（3/4），得 (480/x) × (3/4) = 495/(x+3)，即 360(x+3) = 495x → 135x = 1080 → x = 8。国产买 8+3 = 11 台，单价 = 495 ÷ 11 = 45 万元/台，落在 40—50 之间。选 C。", "tip": "范围题是近年来国考防代入排除的惯用套路，好消息是答案超过 75% 落在中间 B、C 两个闭区间里，先排 A、D 胜率直接翻倍！", "svg": ""}, {"idx": 30, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 06", "name": "奇偶特性（三奇一偶选偶，三偶一奇选奇）", "prio": "T3 常用", "high": false, "rule": "选项中若出现<strong>三个奇数一个偶数，直接选偶数</strong>；出现<strong>三个偶数一个奇数，直接选奇数</strong>（整数、小数末位均适用）！", "source": "2023年江苏省考《行测》（B类）第52题", "stem": "甲、乙、丙三个家庭去年的年收入比五年前分别增长了50%、60%、150%。这三个家庭去年的年收入总和为84万元，比五年前多35万元。若去年丙家庭的年收入为20万元，则五年前乙家庭的年收入为：", "opts": [{"key": "A", "text": "16万元"}, {"key": "B", "text": "20万元"}, {"key": "C", "text": "25万元"}, {"key": "D", "text": "36万元"}], "ans": "C", "hack": "一秒扫奇偶：A. 16（偶）、B. 20（偶）、D. 36（偶），唯独 <strong>C. 25</strong> 是奇数！标准<strong>“三偶一奇”</strong>格局，直接选奇数 <strong>C. 25万元</strong>！", "math": "五年前三家总收入 = 84 − 35 = 49 万元。去年丙20万（增150%即2.5倍），故五年前丙 = 20÷2.5 = 8 万，五年前甲+乙 = 49 − 8 = 41 万。增长额：丙增 20−8 = 12 万，故甲乙共增 35−12 = 23 万，即 0.5甲 + 0.6乙 = 23。代入 甲 = 41−乙 得 20.5 + 0.1乙 = 23 → 乙 = 25 万元。选 C。", "tip": "注意优先级：如果同时有“三等差一特殊”或“二倍关系”，优先用前两者；没有高优先级特征时，三偶一奇/三奇一偶非常灵！", "svg": ""}, {"idx": 31, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 07", "name": "有零有整（优先选整数 / 整百整千数）", "prio": "T3 常用", "high": false, "rule": "当其他选项都带着零头（如小数、十位零头），唯独<strong>某一个选项是干净的整数或整百/整千数</strong>时，优先选那个最整的数！", "source": "2023年江苏省考《行测》（B类）第55题", "stem": "某学校的运动场是椭圆形。边界椭圆上一点到中心距离的最小值是20米，两点间距离的最大值是80米。若学生在该运动场上排成方阵，则所排成方阵面积的最大值为：", "opts": [{"key": "A", "text": "1280平方米"}, {"key": "B", "text": "1360平方米"}, {"key": "C", "text": "1440平方米"}, {"key": "D", "text": "1600平方米"}], "ans": "D", "hack": "椭圆内接矩形最大面积公式忘了怎么办？直接看选项：1280、1360、1440 全带十位零头，唯有 <strong>D. 1600</strong> 是干净漂亮的<strong>整百数（还是完全平方数 40²）</strong>！套用「有零有整选整数」，直接秒 <strong>D. 1600平方米</strong>！", "math": "椭圆上一点到中心最小距离即短半轴 b = 20 米，两点间最大距离即长轴 2a = 80 米 → 长半轴 a = 40 米。椭圆内接矩形面积最大值为 2ab = 2 × 40 × 20 = 1600 平方米。选 D。", "tip": "和原秘籍例题（A.3840 B.4450 C.5000 D.5680 选C）如出一辙——见到三个有零头夹着一个整百/整千，闭眼冲那个最整的！", "svg": ""}, {"idx": 32, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 25", "name": "+1 原则（某选项等于另一选项 +1，就选它）", "prio": "T3 常用", "high": false, "rule": "当四个非连续选项中，出现<strong>某一个选项恰好等于另一个选项 +1</strong>（如 6、10、15、16 中的 16 = 15+1）时，优先选那个 <strong>+1 后的大选项</strong>！", "source": "2026年国考《行测》（地市级）第67题", "stem": "某部门7人分两组到甲、乙两市进行调研。已知到甲市人数超过一半，老张和小王均到乙市，问共有多少种不同的分组方式？", "opts": [{"key": "A", "text": "10"}, {"key": "B", "text": "8"}, {"key": "C", "text": "6"}, {"key": "D", "text": "5"}], "ans": "C", "hack": "观察四个选项：10、8、<strong>6</strong>、<strong>5</strong>，只有 6 和 5 相差 1（<code>6 = 5 + 1</code>），且同时完美命中 T0 技巧10「三等差一特殊」（10、8、6 等差，5 是特殊项，离特殊项最近的等差项正是 6）！双技合体，直秒 <strong>C. 6</strong>！", "math": "共7人，甲市超过一半且老张、小王必去乙市，故甲市只能去4人或5人：① 甲4乙3：余下5人中选1人去乙市，有 C(5,1) = 5 种；② 甲5乙2：余下5人全去甲市，有 1 种。合计 5 + 1 = 6 种。选 C。", "tip": "出题人常把“忘了加那 1 种极端/全选情况（如本题漏了全去甲市的1种）”设成干扰项，所以 +1 项往往就是完整答案！", "svg": ""}, {"idx": 33, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 05", "name": "选项有升有降（排最大最小，中间二选一）", "prio": "T3 常用", "high": false, "rule": "选项数值并非单调排列，而是<strong>有升有降</strong>（乱序）时，先<strong>排除最大值和最小值</strong>，再结合题干松紧度从剩下的两个中间值里选！", "source": "2024年国考《行测》（地市级）第64题", "stem": "公司有六个编号依次为1—6的研发团队，现安排这6个团队参与甲、乙两个科研课题，要求每个团队参与一个课题。每个课题最少安排2个团队，每个课题安排一个团队负责，且负责团队不能是该课题所有参与团队中编号最小的团队。问有多少种不同的安排方式？", "opts": [{"key": "A", "text": "300"}, {"key": "B", "text": "340"}, {"key": "C", "text": "150"}, {"key": "D", "text": "170"}], "ans": "D", "hack": "选项 <code>300 ↑ 340 ↓ 150 ↑ 170</code> 明显有升有降！第一步：果断排掉最大 B(340) 和最小 C(150)，仅剩 A(300) 与 <strong>D(170)</strong>；第二步：读题干发现限制条件特别苛刻（每课题至少2队 + 选负责人 + 不能是最小编号），总情况数偏少 → 果断选偏小的 <strong>D. 170</strong>！", "math": "6队分给甲、乙（每课题≥2队）有两种人数结构：① 2队+4队（甲乙可互换×2）：C(6,2) × 1（2队里非最小编号只有1种负责法）× 3（4队里非最小编号有3种负责法）× 2 = 15×3×2 = 90 种；② 3队+3队：C(6,3) × 2 × 2 = 20×4 = 80 种。合计 90 + 80 = 170 种。选 D。", "tip": "注意本题选项有两组二倍关系（150↔300、170↔340），若只套二倍会误选 B 或 A，因此结合“有升有降排极值 + 限制多选小”精准锁定 D！", "svg": ""}, {"idx": 34, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 03", "name": "选项单调升（无规律递增 → 选最小和第二小）", "prio": "T4 辅助", "high": false, "rule": "选项呈<strong>毫无规律的单调递增</strong>（非等差、非等比）时，优先在<strong>最小和第二小（A、B）</strong>里选！（若成等差则直接用技巧08选第二小）", "source": "2026年国考《行测》（副省级）第74题", "stem": "某考试有30人参加，每人得分都是0—100之间的整数且互不相同。已知得分不低于90的人平均分为93.8分，小姜得了92分，问他的成绩排名最低可能是第几名？", "opts": [{"key": "A", "text": "4"}, {"key": "B", "text": "5"}, {"key": "C", "text": "7"}, {"key": "D", "text": "8"}], "ans": "A", "hack": "选项 <code>4 < 5 < 7 < 8</code>，相邻差值分别为 1、2、1，属于无规律单调递增！直接排除 C、D，锁定 <strong>A、B</strong> 二选一；再快速心算：93.8 乘以人数必须是整数，故 ≥90 分者只能有 5 人（10人最低总分 945 > 938 矛盾），5人总分 469 分。若小姜 92 分排第 5，则前 4 名至少 93+94+95+96 = 378，五人总分 ≥ 470 > 469 矛盾！故小姜最低只能排 <strong>A. 第4名</strong>！", "math": "设 ≥90 分有 n 人，总分 93.8n 为整数 → n 为 5 的倍数。因 90—100 共 11 个整数，若 n = 10 则前十名总分至少 90+91+…+99 = 945 > 938 矛盾，故 n = 5，5人总分 = 93.8×5 = 469 分。若小姜92分排第5，则前4名最低为 93+94+95+96 = 378，五人总分 ≥ 378+92 = 470 > 469 矛盾；若排第4名，取 98、95、94、92、90（总分恰为 469 且互不相同）完全成立，故最低排第 4 名。选 A。", "tip": "单调性排在选项技巧最后一层，主要用于<strong>缩小范围（排掉一半选项）</strong>，再配一点点估算或题感即可稳稳拿下！", "svg": ""}, {"idx": 35, "partId": "part3", "partNum": "第三篇", "partTitle": "选项结构蒙题术", "orig": "技巧 04", "name": "选项单调降（排除最大项，辅助救急）", "prio": "T4 辅助", "high": false, "rule": "选项呈<strong>单调递减</strong>时，<strong>优先排除掉最大的 A 选项</strong>，从 B、C、D 中结合其他技巧继续蒙。（此项不常用，实在没招再用）", "source": "2025年国考《行测》（副省级）第69题", "stem": "某研发小组员工中，60%的人参与了A项目，45%的人参与了B项目，两个项目都参与的人比两个项目都不参与的多2人。问该研发小组有多少人？", "opts": [{"key": "A", "text": "100"}, {"key": "B", "text": "50"}, {"key": "C", "text": "40"}, {"key": "D", "text": "20"}], "ans": "C", "hack": "选项 <code>100 > 50 > 40 > 20</code> 无规律单调降！第一步：套用技巧04先排除最大的 A(100)；第二步：在 B(50)、C(40)、D(20) 中瞬间发现<strong>二倍关系 20 ↔ 40</strong>，直接选 2 倍的那个 → 秒杀 <strong>C. 40</strong>！", "math": "设总人数为 x，两项目都不参与为 y，则都参与为 y+2。由两集合容斥公式：A + B − 都参与 = 总 − 都不参与，即 0.6x + 0.45x − (y+2) = x − y，y 恰好消去，得 0.05x = 2，解得 x = 40 人。选 C。", "tip": "高阶心法：<strong>单调降排 A + 联动高优先级技巧（二倍/等差/奇偶）</strong>，组合拳威力远大于单招！", "svg": ""}], "indexRows": [["01", "最值问题（最大选第二大，最小选第二小）", "第三篇 · T1", "2021国考地市Q64 / 2017国考地市Q65"], ["02", "二倍关系（选2倍；双2倍选B/C中2倍）", "第三篇 · T1", "2025国考行政执法Q68"], ["03", "选项单调升（选最小和第二小）", "第三篇 · T4", "2026国考副省级Q74"], ["04", "选项单调降（排除最大项，辅助用）", "第三篇 · T4", "2025国考副省级Q69"], ["05", "选项有升有降（排最大最小，中间二选一）", "第三篇 · T3", "2024国考地市级Q64"], ["06", "奇偶特性（三奇一偶选偶，三偶一奇选奇）", "第三篇 · T3", "2023江苏省考B类Q52"], ["07", "有零有整（优先选整数/整百整千）", "第三篇 · T3", "2023江苏省考B类Q55"], ["08", "等差数列（选第二小的）", "第三篇 · T1", "2026国考地市级Q68"], ["09", "等比数列（选最小的）", "第三篇 · T2", "2025国考行政执法Q69"], ["10", "三等差一特殊（选离特殊项近的）", "第三篇 · T0", "2021国考地市级Q61"], ["11", "三同求异（三个差不多，直选特殊的）", "第三篇 · T2", "2023北京市考Q66"], ["12", "范围问题（直接蒙带范围的B/C）", "第三篇 · T2", "2022国考地市级Q62"], ["13", "概率/排列组合（①相加 ②和为1 ③掐头去尾）", "第二篇 · 高频", "2024天津Q8 / 2021河南Q26 / 2026国考副省Q70"], ["14", "追及问题（选第二大）", "第二篇 · 高频", "2015国考副省级Q70"], ["15", "几何问题（①估测 ②根号选整 ③半径 ④直径）", "第二篇 · 高频", "2025湖北Q64 / 2022江苏A Q59 / 2015国考Q69 / 2025湖北Q63"], ["16", "行程问题（找6的倍数，多合成因子）", "第二篇 · 高频", "2024国考副省级Q66"], ["17", "经济利润（排最大最小，中间最整）", "第二篇 · 高频", "2019国考副省级Q63"], ["18", "工程问题（找6或6的倍数，更偏整）", "第二篇 · 高频", "2015国考地市级Q63"], ["19", "和差倍比（选最小的）", "第二篇 · 高频", "2024国考副省级Q65"], ["20", "年龄问题（先找倍数，否则选最小）", "第二篇 · 高频", "2025国考副省级Q70"], ["21", "日期问题（偏向选最大项）", "第二篇 · 高频", "2025国考副省级Q75"], ["22", "谁比谁怎么样（直接选D）", "第二篇 · 神技", "2024国考副省级Q62"], ["23", "最大信息化（同位高频交集）", "第一篇 · 直秒", "2025多省联考湖北Q57（原图真题）"], ["24", "最不利构造（最倒霉情况+1）", "第一篇 · 直秒", "2022河北省考Q74"], ["25", "+1原则（某项=另一项+1，直选该项）", "第三篇 · T3", "2026国考地市级Q67"], ["26", "倍数特性（比例分数→对应倍数）", "第一篇 · 直秒", "2024浙江省考C类Q61"], ["27", "天平问题（直选3次，没3选4）", "第二篇 · 结论", "2017联考河北Q43 / 湖北Q65"], ["28", "夜跑题（题干出现哪个排哪个）", "第二篇 · 专项", "2025国考行政执法Q71（原题）"], ["29", "分段计算+合并省钱（选最小）", "第二篇 · 专项", "2020联考河北Q66"], ["30", "结合常识找选项", "第一篇 · 直秒", "2025国考行政执法Q66"], ["31", "终极技巧（全模块均衡分布补缺）", "第四篇 · 兜底", "2024 & 2025 国考副省级全15题实证"]]};
+const SVG_FLOW = `
+<svg viewBox="0 0 760 116" class="ed-svg" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="ed-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#141414"/>
+    </marker>
+  </defs>
+  <!-- Step 1 -->
+  <rect x="2" y="10" width="132" height="84" fill="#FFFFFF" stroke="#141414" stroke-width="1.2"/>
+  <rect x="2" y="10" width="132" height="3" fill="#141414"/>
+  <text x="12" y="30" fill="#B92B27" font-size="10.5" font-weight="700">01</text>
+  <text x="30" y="30" fill="#141414" font-size="11.5" font-weight="700">简单题快算</text>
+  <text x="12" y="50" fill="#444" font-size="10">30秒内有清晰思路</text>
+  <text x="12" y="65" fill="#444" font-size="10">直接硬算稳拿满分</text>
+  <text x="12" y="84" fill="#666" font-size="9">保底做对 3–5 题</text>
+  <line x1="134" y1="52" x2="154" y2="52" stroke="#141414" stroke-width="1.1" marker-end="url(#ed-arr)"/>
+
+  <!-- Step 2 -->
+  <rect x="158" y="10" width="134" height="84" fill="#FFFFFF" stroke="#141414" stroke-width="1.2"/>
+  <rect x="158" y="10" width="134" height="3" fill="#B92B27"/>
+  <text x="168" y="30" fill="#B92B27" font-size="10.5" font-weight="700">02</text>
+  <text x="186" y="30" fill="#141414" font-size="11.5" font-weight="700">题干直秒特征</text>
+  <text x="168" y="50" fill="#444" font-size="10">最不利 / 倍数整除</text>
+  <text x="168" y="65" fill="#444" font-size="10">最大信息 / 生活常识</text>
+  <text x="168" y="84" fill="#B92B27" font-size="9" font-weight="600">命中率极高 · 优先出手</text>
+  <line x1="292" y1="52" x2="312" y2="52" stroke="#141414" stroke-width="1.1" marker-end="url(#ed-arr)"/>
+
+  <!-- Step 3 -->
+  <rect x="316" y="10" width="138" height="84" fill="#FFFFFF" stroke="#141414" stroke-width="1.2"/>
+  <rect x="316" y="10" width="138" height="3" fill="#141414"/>
+  <text x="326" y="30" fill="#B92B27" font-size="10.5" font-weight="700">03</text>
+  <text x="344" y="30" fill="#141414" font-size="11.5" font-weight="700">高频题型秒杀</text>
+  <text x="326" y="50" fill="#444" font-size="10">排概 / 几何 / 行程</text>
+  <text x="326" y="65" fill="#444" font-size="10">利润 / 工程 / 年龄日期</text>
+  <text x="326" y="84" fill="#141414" font-size="9" font-weight="600">铁律：题型 &gt; 选项</text>
+  <line x1="454" y1="52" x2="474" y2="52" stroke="#141414" stroke-width="1.1" marker-end="url(#ed-arr)"/>
+
+  <!-- Step 4 -->
+  <rect x="478" y="10" width="144" height="84" fill="#FFFFFF" stroke="#141414" stroke-width="1.2"/>
+  <rect x="478" y="10" width="144" height="3" fill="#141414"/>
+  <text x="488" y="30" fill="#B92B27" font-size="10.5" font-weight="700">04</text>
+  <text x="506" y="30" fill="#141414" font-size="11.5" font-weight="700">选项结构蒙题</text>
+  <text x="488" y="50" fill="#444" font-size="10">三等差一特殊 &gt; 二倍</text>
+  <text x="488" y="65" fill="#444" font-size="10">&gt; 等差 ≈ 最值 &gt; 奇偶</text>
+  <text x="488" y="84" fill="#666" font-size="9">没空读题时直接看选项</text>
+  <line x1="622" y1="52" x2="642" y2="52" stroke="#141414" stroke-width="1.1" marker-end="url(#ed-arr)"/>
+
+  <!-- Step 5 -->
+  <rect x="646" y="10" width="112" height="84" fill="#F6F5F1" stroke="#141414" stroke-width="1.2"/>
+  <rect x="646" y="10" width="112" height="3" fill="#B92B27"/>
+  <text x="656" y="30" fill="#B92B27" font-size="10.5" font-weight="700">05</text>
+  <text x="674" y="30" fill="#141414" font-size="11.5" font-weight="700">终极兜底</text>
+  <text x="656" y="50" fill="#444" font-size="10">统计全模块分布</text>
+  <text x="656" y="65" fill="#444" font-size="10">全蒙出现最少项</text>
+  <text x="656" y="84" fill="#666" font-size="9">利用均匀分布</text>
+
+  <text x="2" y="110" fill="#55595E" font-size="9.5">策略总则：会做的快速拿满，难题与耗时题按 01 → 05 顺序果断处理，为资料分析与判断推理留足时间。</text>
+</svg>
+`;
+const SVG_DIST = `
+<svg viewBox="0 0 680 162" class="ed-svg" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left panel: 2024 GK 副省级 -->
+  <rect x="2" y="4" width="326" height="154" fill="#FFFFFF" stroke="#D5D2CA" stroke-width="1"/>
+  <text x="16" y="24" font-size="11.5" font-weight="700" fill="#141414">2024年国考（副省级）数量 15 题分布</text>
+  <text x="16" y="39" font-size="9.2" fill="#55595E">Q61–75：C D C D C · A A D A C · C B B B A</text>
+  <line x1="20" y1="132" x2="308" y2="132" stroke="#141414" stroke-width="1"/>
+  <rect x="44" y="72" width="38" height="60" fill="#2F343A"/>
+  <text x="63" y="67" text-anchor="middle" font-size="10" font-weight="700" fill="#141414">4题</text>
+  <text x="63" y="147" text-anchor="middle" font-size="10" fill="#444">A (26.7%)</text>
+
+  <rect x="112" y="87" width="38" height="45" fill="#7D838B"/>
+  <text x="131" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#555">3题</text>
+  <text x="131" y="147" text-anchor="middle" font-size="10" fill="#444">B (20.0%)</text>
+
+  <rect x="180" y="57" width="38" height="75" fill="#B92B27"/>
+  <text x="199" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="#B92B27">5题</text>
+  <text x="199" y="147" text-anchor="middle" font-size="10" fill="#444">C (33.3%)</text>
+
+  <rect x="248" y="87" width="38" height="45" fill="#7D838B"/>
+  <text x="267" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#555">3题</text>
+  <text x="267" y="147" text-anchor="middle" font-size="10" fill="#444">D (20.0%)</text>
+
+  <!-- Right panel: 2025 GK 副省级 -->
+  <rect x="352" y="4" width="326" height="154" fill="#FFFFFF" stroke="#D5D2CA" stroke-width="1"/>
+  <text x="366" y="24" font-size="11.5" font-weight="700" fill="#141414">2025年国考（副省级）数量 15 题分布</text>
+  <text x="366" y="39" font-size="9.2" fill="#55595E">Q66–80：A D B C D · C B C A D · B A A D D</text>
+  <line x1="370" y1="132" x2="658" y2="132" stroke="#141414" stroke-width="1"/>
+  <rect x="394" y="72" width="38" height="60" fill="#2F343A"/>
+  <text x="413" y="67" text-anchor="middle" font-size="10" font-weight="700" fill="#141414">4题</text>
+  <text x="413" y="147" text-anchor="middle" font-size="10" fill="#444">A (26.7%)</text>
+
+  <rect x="462" y="87" width="38" height="45" fill="#7D838B"/>
+  <text x="481" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#555">3题</text>
+  <text x="481" y="147" text-anchor="middle" font-size="10" fill="#444">B (20.0%)</text>
+
+  <rect x="530" y="87" width="38" height="45" fill="#7D838B"/>
+  <text x="549" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#555">3题</text>
+  <text x="549" y="147" text-anchor="middle" font-size="10" fill="#444">C (20.0%)</text>
+
+  <rect x="598" y="57" width="38" height="75" fill="#B92B27"/>
+  <text x="617" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="#B92B27">5题</text>
+  <text x="617" y="147" text-anchor="middle" font-size="10" fill="#444">D (33.3%)</text>
+</svg>
+`;
+
+const STORAGE_KEY = "shangan_jijiubao_quiz_v2";
+let state = {
+  view: "practice",   // cheatsheet | practice | part4 | index
+  mode: "quiz",       // quiz | focus | study
+  filter: "all",      // all | high | wrong | todo
+  showHintBefore: false,
+  focusIdx: 0,        // index into filtered items
+  answers: {},      // { itemIdx: { chosen: "A", correct: true, sec: 12 } }
+  hintShown: {},    // { itemIdx: true }
+};
+
+let questionStartTs = Date.now();
+let timerInterval = null;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed.answers === "object") {
+        state.answers = parsed.answers;
+      }
+    }
+  } catch (e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ answers: state.answers }));
+  } catch (e) {}
+}
+
+function getFilteredItems() {
+  return DATA.items.filter(it => {
+    const rec = state.answers[it.idx];
+    if (state.filter === "high") return it.high;
+    if (state.filter === "wrong") return rec && !rec.correct;
+    if (state.filter === "todo") return !rec;
+    return true;
+  });
+}
+
+function updateSidebar() {
+  const total = DATA.items.length;
+  const recs = Object.values(state.answers);
+  const done = recs.length;
+  const right = recs.filter(r => r.correct).length;
+  document.getElementById("sc-done").textContent = `${done}/${total}`;
+  document.getElementById("sc-right").textContent = String(right);
+  document.getElementById("sc-acc").textContent = done ? Math.round(right / done * 100) + "%" : "--";
+  document.getElementById("prog-fill").style.width = (done / total * 100) + "%";
+
+  // Mode buttons
+  ["quiz", "focus", "study"].forEach(m => {
+    document.getElementById("m-" + m).classList.toggle("active", state.mode === m);
+  });
+  // Filter buttons
+  ["all", "high", "wrong", "todo"].forEach(f => {
+    document.getElementById("f-" + f).classList.toggle("active", state.filter === f);
+  });
+  // Nav links
+  const navMap = { cheatsheet: "nv-sheet", practice: "nv-practice", part4: "nv-part4", index: "nv-index" };
+  Object.entries(navMap).forEach(([v, id]) => {
+    document.getElementById(id).classList.toggle("active", state.view === v);
+  });
+
+  // Answer sheet tiles
+  const grid = document.getElementById("card-grid");
+  const filtered = getFilteredItems();
+  const curFocusItem = (state.mode === "focus" && filtered[state.focusIdx]) ? filtered[state.focusIdx].idx : -1;
+  grid.innerHTML = DATA.items.map(it => {
+    const rec = state.answers[it.idx];
+    let cls = "q-tile";
+    if (rec) cls += rec.correct ? " st-right" : " st-wrong";
+    if (it.idx === curFocusItem) cls += " is-cur";
+    return `<button class="${cls}" title="${it.orig} ${it.name}" onclick="jumpToItem(${it.idx})">${it.idx}</button>`;
+  }).join("");
+}
+
+function renderQuestionCard(it, isFocus) {
+  const rec = state.answers[it.idx];
+  const isStudy = (state.mode === "study");
+  const isRevealed = isStudy || Boolean(rec);
+  const showRule = isRevealed || state.showHintBefore || Boolean(state.hintShown[it.idx]);
+
+  let cardCls = "q-card";
+  if (rec && !isStudy) cardCls += rec.correct ? " answered-right" : " answered-wrong";
+
+  const optsHtml = it.opts.map(o => {
+    let cls = "opt-btn";
+    let badge = "";
+    if (isStudy) {
+      if (o.key === it.ans) { cls += " is-correct"; badge = "正确答案"; }
+    } else if (rec) {
+      if (o.key === it.ans) { cls += " is-correct"; badge = "✓ 正确"; }
+      else if (o.key === rec.chosen) { cls += " is-wrong"; badge = "× 你的选择"; }
+      else { cls += " is-dim"; }
+    }
+    const dis = isRevealed ? "disabled" : "";
+    return `
+      <button class="${cls}" ${dis} onclick="chooseOption(${it.idx}, '${o.key}')">
+        <span class="opt-letter">${o.key}</span>
+        <span class="opt-text">${o.text}</span>
+        ${badge ? `<span class="opt-status">${badge}</span>` : ""}
+      </button>
+    `;
+  }).join("");
+
+  let verdictHtml = "";
+  if (isStudy) {
+    verdictHtml = `<div class="verdict-bar v-study"><span class="verdict-main">官方答案：${it.ans}</span><span style="font-size:13px;color:var(--muted);">已核验真题答案</span></div>`;
+  } else if (rec) {
+    const secStr = rec.sec ? ` · 用时 ${rec.sec} 秒` : "";
+    if (rec.correct) {
+      verdictHtml = `<div class="verdict-bar v-right"><span class="verdict-main">回答正确（选 ${rec.chosen}）${secStr}</span><button class="redo-btn" onclick="redoItem(${it.idx})">重做此题</button></div>`;
+    } else {
+      verdictHtml = `<div class="verdict-bar v-wrong"><span class="verdict-main">选错了（你选了 ${rec.chosen}，正确答案是 ${it.ans}）${secStr}</span><button class="redo-btn" onclick="redoItem(${it.idx})">重做此题</button></div>`;
+    }
+  }
+
+  const hintCtrl = (!showRule)
+    ? `<button class="hint-btn" onclick="revealHint(${it.idx})">先看本招口诀提示</button>`
+    : "";
+
+  const timerHtml = (isFocus && !isRevealed) ? `<span class="q-timer" id="live-timer">00:00</span>` : "";
+
+  return `
+    <article class="${cardCls}" id="q-card-${it.idx}">
+      <div class="q-top">
+        <div class="q-top-left">
+          <span class="q-num-tag">#${String(it.idx).padStart(2,'0')} · ${it.orig}</span>
+          <h3 class="q-title">${it.name}</h3>
+        </div>
+        <div class="q-top-right">
+          ${timerHtml}
+          <span class="q-prio">${it.prio}</span>
+        </div>
+      </div>
+
+      ${hintCtrl}
+      <div class="rule-strip ${showRule ? '' : 'is-hidden'}">
+        <span class="rl">口诀</span>${it.rule}
+      </div>
+
+      <div class="q-source">真题来源 · ${it.source}</div>
+      <div class="q-body ${it.svg ? 'has-geom' : ''}">
+        <p class="q-stem">${it.stem}</p>
+        ${it.svg ? `<div class="q-geom">${it.svg}</div>` : ""}
+      </div>
+
+      <div class="opts-list">${optsHtml}</div>
+
+      <div class="sol-drawer ${isRevealed ? 'open' : ''}">
+        ${verdictHtml}
+        <div class="dual-sol">
+          <div class="ds-col">
+            <div class="ds-hd red">速解秒杀演示</div>
+            <p>${it.hack}</p>
+          </div>
+          <div class="ds-col ds-math">
+            <div class="ds-hd">标准数学解析</div>
+            <p>${it.math}</p>
+          </div>
+        </div>
+        <div class="ds-tip"><strong>考场注记：</strong>${it.tip}</div>
+      </div>
+    </article>
+  `;
+}
+
+function renderWorkspace() {
+  clearInterval(timerInterval);
+  const ws = document.getElementById("workspace");
+
+  if (state.view === "cheatsheet") {
+    ws.innerHTML = `
+      <div class="ws-bar">
+        <h2>考前 3 分钟决策总纲与优先级表</h2>
+        <div class="ws-bar-meta">进考场前通读此页即可直接实战</div>
+      </div>
+      <section class="cheatsheet-card">
+        ${SVG_FLOW}
+        <div class="cs-two">
+          <div class="cs-panel">
+            <h3>技巧冲突时的绝对优先级</h3>
+            <table class="cs-table">
+              <tr><td>总原则</td><td><strong>题干优先于选项，题型技巧 &gt; 选项技巧</strong></td></tr>
+              <tr><td>选项 T0</td><td><strong>三等差一特殊</strong>（选离特殊项最近的等差项）</td></tr>
+              <tr><td>选项 T1</td><td><strong>二倍关系</strong> &gt; <strong>等差数列（第二小）</strong> ≈ <strong>最值（次大/次小）</strong></td></tr>
+              <tr><td>选项 T2</td><td><strong>等比（最小）</strong> · <strong>三同求异（特殊）</strong> · <strong>范围题（B/C）</strong></td></tr>
+              <tr><td>选项 T3</td><td><strong>奇偶（三一）</strong> · <strong>有零有整</strong> · <strong>+1原则</strong> · <strong>有升有降</strong></td></tr>
+              <tr><td>选项 T4</td><td><strong>单调升 / 单调降</strong>（仅作辅助排除）</td></tr>
+            </table>
+          </div>
+          <div class="cs-panel">
+            <h3>高频题型 60 秒速记口诀</h3>
+            <table class="cs-table">
+              <tr><td>直秒类</td><td>最不利（最倒霉+1） · 倍数（比例整除） · 最大信息（同位高频）</td></tr>
+              <tr><td>排概类</td><td>排列组合看两项相加；概率看相加为 1，无则掐头去尾</td></tr>
+              <tr><td>几何类</td><td>尺量估比（身份证 8.56cm）；有根号选整；半径次小、直径最小</td></tr>
+              <tr><td>行工类</td><td>追及选第二大；普通行程 / 工程找 6 的倍数且因数最多</td></tr>
+              <tr><td>常规类</td><td>利润排极选整 · 和差倍比与分段选最小 · 年龄倍数或最小</td></tr>
+              <tr><td>特殊类</td><td>日期偏大 · 谁比谁选 D · 天平 3 次（无选 4）· 夜跑排题干数</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="cs-top15">
+          <strong style="color:var(--red);">时间有限必背 Top 15 核心技巧：</strong>
+          三等差一特殊(10) · 二倍关系(02) · 等差数列(08) · 最值问题(01) · 最不利构造(24) · 倍数特性(26) · 排列概率(13) · 几何四招(15) · 行程问题(16) · 追及问题(14) · 经济利润(17) · 工程问题(18) · 和差倍比(19) · 年龄问题(20) · 日期问题(21)
+        </div>
+        <div class="cs-note">
+          <strong>术语注释：</strong>“更偏整”指合成因子（数学上的“因数”）更多。如 6 的因数有 4 个，12 的因数有 6 个，故 12 比 6 更偏整；若因数个数相近，尾数为 0 或 00 的优先。
+        </div>
+      </section>
+    `;
+    return;
+  }
+
+  if (state.view === "part4") {
+    ws.innerHTML = `
+      <div class="ws-bar">
+        <h2>第四篇 · 终极兜底术（技巧 31）</h2>
+        <div class="ws-bar-meta">2024 &amp; 2025 国考副省级完整 15 题分布实证</div>
+      </div>
+      <section class="cheatsheet-card">
+        <div class="rule-strip" style="margin-bottom:22px;">
+          <span class="rl">口诀</span>若某题完全无法套用前 30 项技巧，清点<strong>整个数量关系模块</strong>已定答案中<strong>出现次数最少的字母</strong>，余下无解之题统一全蒙该选项。
+        </div>
+        ${SVG_DIST}
+        <div class="cs-two" style="margin-top:24px;grid-template-columns:repeat(3,1fr);">
+          <div class="cs-panel">
+            <h3>01 · 稳拿 4–6 道常规题</h3>
+            <p style="font-size:14.5px;color:var(--ink-2);">前 6–8 分钟完成最易计算的方程、倍数、最不利题，并在草稿纸顶部实时统计各字母出现次数。</p>
+          </div>
+          <div class="cs-panel">
+            <h3>02 · 技巧秒选 4–6 题</h3>
+            <p style="font-size:14.5px;color:var(--ink-2);">对中难题按「题型 &gt; 选项」顺序快速秒选，更新 ABCD 计数（如 A:3, B:1, C:4, D:3）。</p>
+          </div>
+          <div class="cs-panel">
+            <h3>03 · 余题集中涂最少项</h3>
+            <p style="font-size:14.5px;color:var(--ink-2);">国考 15 题分布几乎稳定在 3-3-4-5。上例中 B 仅 1 次，余下 3 题全涂 B，期望得分远高于分散盲蒙。</p>
+          </div>
+        </div>
+      </section>
+    `;
+    return;
+  }
+
+  if (state.view === "index") {
+    const rows = DATA.indexRows.map(r => `
+      <tr>
+        <td style="font-family:var(--mono);font-weight:700;color:var(--red);width:68px;">${r[0]}</td>
+        <td style="font-weight:500;">${r[1]}</td>
+        <td style="white-space:nowrap;color:var(--ink);font-weight:600;width:120px;">${r[2]}</td>
+        <td style="color:var(--muted);font-size:13.5px;">${r[3]}</td>
+      </tr>
+    `).join("");
+    ws.innerHTML = `
+      <div class="ws-bar">
+        <h2>原秘籍 01–31 技巧 × 精选真题总表</h2>
+        <div class="ws-bar-meta">按原 PDF 编号顺序排列</div>
+      </div>
+      <section class="cheatsheet-card" style="padding:20px 28px;">
+        <table class="cs-table" style="font-size:14.5px;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--ink);">
+              <th style="text-align:left;padding:10px 0;">编号</th>
+              <th style="text-align:left;padding:10px 0;">技巧名称与核心动作</th>
+              <th style="text-align:left;padding:10px 0;">所属篇目</th>
+              <th style="text-align:left;padding:10px 0;">精选真题来源</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </section>
+    `;
+    return;
+  }
+
+  // PRACTICE VIEW (quiz | focus | study)
+  const items = getFilteredItems();
+  const modeNames = { quiz: "整页刷题模式", focus: "逐题专注模式", study: "背诵速览模式" };
+  const hintToggle = (state.mode !== "study")
+    ? `<label class="toggle-pill"><input type="checkbox" ${state.showHintBefore ? "checked" : ""} onchange="toggleShowHint(this.checked)"/> 做题前默认显示口诀</label>`
+    : "";
+
+  let headerHtml = `
+    <div class="ws-bar">
+      <h2>${modeNames[state.mode]}</h2>
+      <div class="ws-bar-meta">
+        ${hintToggle}
+        <span>当前筛选：${items.length} 题</span>
+      </div>
+    </div>
+  `;
+
+  if (items.length === 0) {
+    ws.innerHTML = headerHtml + `<div class="empty-state">当前筛选条件下暂无题目（例如尚未产生错题，或所有题目均已作答）。<br/><br/><button class="fn-btn" onclick="setFilter('all')">查看全部题目</button></div>`;
+    return;
+  }
+
+  if (state.mode === "focus") {
+    if (state.focusIdx >= items.length) state.focusIdx = items.length - 1;
+    if (state.focusIdx < 0) state.focusIdx = 0;
+    const it = items[state.focusIdx];
+    questionStartTs = Date.now();
+    ws.innerHTML = headerHtml + renderQuestionCard(it, true) + `
+      <div class="focus-nav">
+        <button class="fn-btn" ${state.focusIdx === 0 ? "disabled" : ""} onclick="stepFocus(-1)">← 上一题</button>
+        <div class="fn-hint">第 ${state.focusIdx + 1} / ${items.length} 题 · 快捷键：A/B/C/D 或 1/2/3/4 选答，← / → 切题</div>
+        <button class="fn-btn" ${state.focusIdx === items.length - 1 ? "disabled" : ""} onclick="stepFocus(1)">下一题 →</button>
+      </div>
+    `;
+    if (!state.answers[it.idx]) {
+      timerInterval = setInterval(() => {
+        const el = document.getElementById("live-timer");
+        if (!el) return;
+        const s = Math.floor((Date.now() - questionStartTs) / 1000);
+        el.textContent = String(Math.floor(s/60)).padStart(2,'0') + ":" + String(s%60).padStart(2,'0');
+      }, 500);
+    }
+    return;
+  }
+
+  // List mode (quiz or study): group by part
+  let bodyHtml = "";
+  let lastPart = "";
+  for (const it of items) {
+    if (it.partId !== lastPart) {
+      lastPart = it.partId;
+      const pm = DATA.parts.find(p => p.id === it.partId);
+      bodyHtml += `
+        <div class="part-divider">
+          <span class="pd-num">${pm.num}</span>
+          <h3 class="pd-title">${pm.title}</h3>
+          <span class="pd-sub">${pm.sub}</span>
+        </div>
+      `;
+    }
+    bodyHtml += renderQuestionCard(it, false);
+  }
+  ws.innerHTML = headerHtml + bodyHtml;
+}
+
+function chooseOption(idx, key) {
+  const it = DATA.items.find(x => x.idx === idx);
+  if (!it || state.answers[idx]) return;
+  const sec = state.mode === "focus" ? Math.max(1, Math.round((Date.now() - questionStartTs) / 1000)) : 0;
+  state.answers[idx] = { chosen: key, correct: key === it.ans, sec };
+  saveState();
+  updateSidebar();
+  if (state.mode === "focus") {
+    renderWorkspace();
+  } else {
+    // Re-render only this card in place to keep scroll steady
+    const el = document.getElementById("q-card-" + idx);
+    if (el) {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = renderQuestionCard(it, false).trim();
+      el.replaceWith(tmp.firstElementChild);
+    }
+  }
+}
+
+function redoItem(idx) {
+  delete state.answers[idx];
+  saveState();
+  updateSidebar();
+  if (state.mode === "focus") {
+    renderWorkspace();
+  } else {
+    const it = DATA.items.find(x => x.idx === idx);
+    const el = document.getElementById("q-card-" + idx);
+    if (el && it) {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = renderQuestionCard(it, false).trim();
+      el.replaceWith(tmp.firstElementChild);
+    }
+  }
+}
+
+function revealHint(idx) {
+  state.hintShown[idx] = true;
+  if (state.mode === "focus") {
+    renderWorkspace();
+  } else {
+    const it = DATA.items.find(x => x.idx === idx);
+    const el = document.getElementById("q-card-" + idx);
+    if (el && it) {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = renderQuestionCard(it, false).trim();
+      el.replaceWith(tmp.firstElementChild);
+    }
+  }
+}
+
+function setMode(m) {
+  state.mode = m;
+  state.view = "practice";
+  updateSidebar();
+  renderWorkspace();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function setFilter(f) {
+  state.filter = f;
+  state.focusIdx = 0;
+  state.view = "practice";
+  updateSidebar();
+  renderWorkspace();
+}
+
+function showView(v) {
+  state.view = v;
+  document.getElementById("sidebar").classList.remove("open");
+  updateSidebar();
+  renderWorkspace();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function toggleShowHint(checked) {
+  state.showHintBefore = checked;
+  renderWorkspace();
+}
+
+function stepFocus(delta) {
+  state.focusIdx += delta;
+  updateSidebar();
+  renderWorkspace();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function jumpToItem(idx) {
+  state.view = "practice";
+  document.getElementById("sidebar").classList.remove("open");
+  let items = getFilteredItems();
+  let pos = items.findIndex(x => x.idx === idx);
+  if (pos === -1) {
+    state.filter = "all";
+    items = getFilteredItems();
+    pos = items.findIndex(x => x.idx === idx);
+  }
+  if (state.mode === "focus") {
+    state.focusIdx = pos;
+    updateSidebar();
+    renderWorkspace();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  } else {
+    updateSidebar();
+    renderWorkspace();
+    setTimeout(() => {
+      const target = document.getElementById("q-card-" + idx);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 20);
+  }
+}
+
+function resetProgress() {
+  if (!confirm("确定清空所有答题记录并重新开始刷题吗？")) return;
+  state.answers = {};
+  state.hintShown = {};
+  saveState();
+  updateSidebar();
+  renderWorkspace();
+}
+
+// Keyboard shortcuts in Focus Mode (A/B/C/D, 1/2/3/4, Left/Right arrows)
+document.addEventListener("keydown", e => {
+  if (state.view !== "practice" || state.mode !== "focus") return;
+  if (e.target && ["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
+  const items = getFilteredItems();
+  const it = items[state.focusIdx];
+  if (!it) return;
+  const k = e.key.toUpperCase();
+  const map = { "1": "A", "2": "B", "3": "C", "4": "D", "A": "A", "B": "B", "C": "C", "D": "D" };
+  if (map[k] && !state.answers[it.idx]) {
+    chooseOption(it.idx, map[k]);
+  } else if (e.key === "ArrowRight" && state.focusIdx < items.length - 1) {
+    stepFocus(1);
+  } else if (e.key === "ArrowLeft" && state.focusIdx > 0) {
+    stepFocus(-1);
+  }
+});
+
+loadState();
+updateSidebar();
+renderWorkspace();
+</script>
+</body>
+</html>
